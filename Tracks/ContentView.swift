@@ -7,9 +7,20 @@ struct ContentView: View {
     @State var alerts:   [Alert]? = nil
     @State var stations: [BothStations]? = nil
 
+    // scheduled trains fetcher
+    let scheduled: Scheduled? = nil
+
     // every 90 seconds
-    let reloadTimer =
+    let trainsTimer =
         Timer.publish(every: 90, on: .main, in: .common).autoconnect()
+
+    // every 180 seconds
+    let alertsTimer =
+        Timer.publish(every: 180, on: .main, in: .common).autoconnect()
+
+    // every 24 hours
+    let scheduledTimer =
+        Timer.publish(every: 86_400, on: .main, in: .common).autoconnect()
 
     var body: some View {
         TabView {
@@ -71,38 +82,39 @@ struct ContentView: View {
             .padding()
         }
         .onAppear {
-            self.fetchScheduled()
+            self.fetchTrains()
             self.fetchAlerts()
         }
         .refreshable {
-            self.fetchScheduled()
+            self.fetchTrains()
             self.fetchAlerts()
         }
-        .onReceive(self.reloadTimer) { _ in
-            self.fetchScheduled()
+        .onReceive(self.trainsTimer) { _ in
+            // every 90 seconds
+            self.fetchTrains()
+        }
+        .onReceive(self.alertsTimer) { _ in
+            // every 180 seconds
             self.fetchAlerts()
+        }
+        .onReceive(self.scheduledTimer) { _ in
+            // every 24 hours
+            self.createScheduled()
         }
     }
 
-    // fetch stations data
-    func fetchStations() {
-        if let url = Bundle.main.url(forResource: "stations", withExtension: "json") {
-            do {
-                let json = try Data(contentsOf: url)
-                let decoder = JSONDecoder()
-
-                let data = try decoder.decode([StationInfo].self, from: json)
-                let stations = Stations(stations: data)
-
-                self.stations = stations.loadStations(trains: self.trains!)
-            } catch {
-                print("error: \(error)")
-            }
+    // fetch trains
+    func fetchTrains() {
+        if self.scheduled == nil {
+            createScheduled()
+        } else {
+            self.trains = self.scheduled!.fetchScheduled()
+            self.fetchRealtime()
         }
     }
 
-    // fetch scheduled trains
-    func fetchScheduled() {
+    // create scheduled
+    func createScheduled() {
         let url = URL(string: "https://www.caltrain.com/?active_tab=route_explorer_tab")!
 
         // fetch caltrain site
@@ -133,13 +145,26 @@ struct ContentView: View {
                     self.trains = self.trains!.filter { train in
                         trainIDs.first { train.id == $0 } == nil
                     } + data
-                } catch {
-                    print("error decoding: \(error)")
-                }
+                } catch {}
             }
 
             self.fetchStations()
         }.resume()
+    }
+
+    // fetch stations
+    func fetchStations() {
+        if let url = Bundle.main.url(forResource: "stations", withExtension: "json") {
+            do {
+                let json = try Data(contentsOf: url)
+                let decoder = JSONDecoder()
+
+                let data = try decoder.decode([StationInfo].self, from: json)
+                let stations = Stations(stations: data)
+
+                self.stations = stations.loadStations(trains: self.trains!)
+            } catch {}
+        }
     }
 
     // fetch alerts
@@ -155,9 +180,7 @@ struct ContentView: View {
                 do {
                     let data = try decoder.decode([Alert].self, from: data)
                     self.alerts = data
-                } catch {
-                    print("error decoding: \(error)")
-                }
+                } catch {}
             }
         }.resume()
     }
