@@ -1,0 +1,123 @@
+import Foundation
+import SwiftUI
+
+// trips view
+struct TripsView: View {
+    let stations: [BothStations]
+    let trains:   [Train]
+
+    // from station
+    @State var from: BothStations
+
+    // to station
+    @State var to: BothStations
+
+    // show past trains
+    @State var showPast = false
+
+    var body: some View {
+        HStack {
+            // from station
+            Picker("From", selection: $from) {
+                ForEach(self.stations, id: \.self) { station in
+                    Text(station.name)
+                }
+            }
+
+            // flip route
+            Button(action: {
+                (self.from, self.to) = (self.to, self.from)
+            }) {
+                Image(systemName: "arrow.right.arrow.left")
+            }
+
+            // to station
+            Picker("To", selection: $to) {
+                ForEach(self.stations, id: \.self) { station in
+                    Text(station.name)
+                }
+            }
+        }
+
+        HStack {
+            // toggle past trains
+            Toggle(isOn: self.$showPast) {
+                Text("Show Past Trains")
+            }.toggleStyle(CheckboxStyle())
+
+            Spacer()
+        }.padding()
+
+        Grid {
+            ForEach(
+                Array(
+                    self.trainsStops()
+                        .filter { self.showPast || $0.3 }
+                        .enumerated()
+                ),
+                id: \.1.0
+            ) { index, data in
+                if index > 0 {
+                    Divider()
+                }
+
+                GridRow {
+                    // trip train
+                    NavigationLink {
+                        TrainView(
+                            train:    data.0,
+                            trains:   self.trains,
+                            stations: self.stations
+                        )
+                    } label: {
+                        HStack {
+                            Image(systemName: "tram.fill")
+                                .foregroundColor(data.0.lineColor())
+
+                            Text(String(data.0.id))
+                        }
+                    }.gridColumnAlignment(.leading)
+
+                    // start time
+                    Text(data.1.expected.formatted(date: .omitted, time: .shortened))
+                        .gridColumnAlignment(.trailing)
+
+                    // end time
+                    Text(data.2.expected.formatted(date: .omitted, time: .shortened))
+                        .gridColumnAlignment(.trailing)
+                }
+                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                .colorMultiply(!data.3 ? .gray : .white)
+            }
+        }
+    }
+
+    // get trains with stops
+    func trainsStops() -> [(Train, Stop, Stop, Bool)] {
+        self.trains
+            .map {
+                (
+                    $0,
+                    $0.stops.first {
+                        $0.station == from.north.id || $0.station == from.south.id
+                    },
+                    $0.stops.first {
+                        $0.station == to.north.id || $0.station == to.south.id
+                    }
+                )
+            }
+            .filter {
+                $0.1 != nil && $0.2 != nil &&
+                    $0.0.stops.firstIndex(of: $0.1!)! < $0.0.stops.firstIndex(of: $0.2!)!
+            }
+            .map    {
+                (
+                    $0.0,
+                    $0.1!,
+                    $0.2!,
+                    $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                )
+            }
+            .sorted { $0.2.expected < $1.2.expected }
+    }
+}

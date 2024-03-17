@@ -1,0 +1,164 @@
+import Foundation
+import SwiftUI
+
+// main view
+struct ContentView: View {
+    @State var trains:   [Train]? = nil
+    @State var alerts:   [Alert]? = nil
+    @State var stations: [BothStations]? = nil
+
+    // every 90 seconds
+    let reloadTimer =
+        Timer.publish(every: 90, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        TabView {
+            // all stations view
+            NavigationStack {
+                ScrollView {
+                    if self.stations != nil && self.trains != nil {
+                        StationsView(trains: self.trains!, stations: self.stations!)
+                    } else {
+                        ProgressView() {
+                            Text("Loading Trains")
+                        }
+                    }
+                }.navigationTitle("Stations")
+            }
+            .tabItem {
+                Label("Stations", systemImage: "house.fill")
+            }
+            .padding()
+
+            // trips view
+            NavigationStack {
+                ScrollView {
+                    if self.stations != nil && self.trains != nil {
+                        TripsView(
+                            stations: self.stations!,
+                            trains:   self.trains!,
+
+                            from: self.stations!.first { $0.name == "Menlo Park" }!,
+                            to:   self.stations!.first { $0.name == "Hillsdale" }!
+                        )
+                    } else {
+                        ProgressView() {
+                            Text("Loading Trains")
+                        }
+                    }
+                }.navigationTitle("Trips")
+            }
+            .tabItem {
+                Label("Trips", systemImage: "map.fill")
+            }
+            .padding()
+
+            // alerts view
+            NavigationStack {
+                ScrollView {
+                    if self.alerts != nil {
+                        AlertsView(alerts: self.alerts!)
+                    } else {
+                        ProgressView() {
+                            Text("Loading Alerts")
+                        }
+                    }
+                }.navigationTitle("Alerts")
+            }
+            .tabItem {
+                Label("Alerts", systemImage: "exclamationmark.triangle.fill")
+            }
+            .padding()
+        }
+        .onAppear {
+            self.fetchScheduled()
+            self.fetchAlerts()
+        }
+        .refreshable {
+            self.fetchScheduled()
+            self.fetchAlerts()
+        }
+        .onReceive(self.reloadTimer) { _ in
+            self.fetchScheduled()
+            self.fetchAlerts()
+        }
+    }
+
+    // fetch stations data
+    func fetchStations() {
+        if let url = Bundle.main.url(forResource: "stations", withExtension: "json") {
+            do {
+                let json = try Data(contentsOf: url)
+                let decoder = JSONDecoder()
+
+                let data = try decoder.decode([StationInfo].self, from: json)
+                let stations = Stations(stations: data)
+
+                self.stations = stations.loadStations(trains: self.trains!)
+            } catch {
+                print("error: \(error)")
+            }
+        }
+    }
+
+    // fetch scheduled trains
+    func fetchScheduled() {
+        let url = URL(string: "https://www.caltrain.com/?active_tab=route_explorer_tab")!
+
+        // fetch caltrain site
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                let scheduled = Scheduled(html: String(data: data, encoding: .utf8)!)
+
+                self.trains = scheduled.fetchScheduled()
+                self.fetchRealtime()
+            }
+        }.resume()
+    }
+
+    // fetch realtime trains
+    func fetchRealtime() {
+        let url = URL(string: "http://localhost:3000/trains")!
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+
+        // fetch data from server
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                do {
+                    let data = try decoder.decode([Train].self, from: data)
+                    let trainIDs = data.map { $0.id }
+
+                    self.trains = self.trains!.filter { train in
+                        trainIDs.first { train.id == $0 } == nil
+                    } + data
+                } catch {
+                    print("error decoding: \(error)")
+                }
+            }
+
+            self.fetchStations()
+        }.resume()
+    }
+
+    // fetch alerts
+    func fetchAlerts() {
+        let url = URL(string: "http://localhost:3000/alerts")!
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+
+        // fetch data from server
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                do {
+                    let data = try decoder.decode([Alert].self, from: data)
+                    self.alerts = data
+                } catch {
+                    print("error decoding: \(error)")
+                }
+            }
+        }.resume()
+    }
+}

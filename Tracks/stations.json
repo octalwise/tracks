@@ -1,0 +1,152 @@
+[
+  {
+    "north": 70011,
+    "south": 70012,
+    "name": "San Francisco"
+  },
+  {
+    "north": 70021,
+    "south": 70022,
+    "name": "22nd Street"
+  },
+  {
+    "north": 70031,
+    "south": 70032,
+    "name": "Bayshore"
+  },
+  {
+    "north": 70041,
+    "south": 70042,
+    "name": "South San Francisco"
+  },
+  {
+    "north": 70051,
+    "south": 70052,
+    "name": "San Bruno"
+  },
+  {
+    "north": 70061,
+    "south": 70062,
+    "name": "Millbrae"
+  },
+  {
+    "north": 70071,
+    "south": 70072,
+    "name": "Broadway"
+  },
+  {
+    "north": 70081,
+    "south": 70082,
+    "name": "Burlingame"
+  },
+  {
+    "north": 70091,
+    "south": 70092,
+    "name": "San Mateo"
+  },
+  {
+    "north": 70101,
+    "south": 70102,
+    "name": "Hayward Park"
+  },
+  {
+    "north": 70111,
+    "south": 70112,
+    "name": "Hillsdale"
+  },
+  {
+    "north": 70121,
+    "south": 70122,
+    "name": "Belmont"
+  },
+  {
+    "north": 70131,
+    "south": 70132,
+    "name": "San Carlos"
+  },
+  {
+    "north": 70141,
+    "south": 70142,
+    "name": "Redwood City"
+  },
+  {
+    "north": 70161,
+    "south": 70162,
+    "name": "Menlo Park"
+  },
+  {
+    "north": 70171,
+    "south": 70172,
+    "name": "Palo Alto"
+  },
+  {
+    "north": 70191,
+    "south": 70192,
+    "name": "California Avenue"
+  },
+  {
+    "north": 70201,
+    "south": 70202,
+    "name": "San Antonio"
+  },
+  {
+    "north": 70211,
+    "south": 70212,
+    "name": "Mountain View"
+  },
+  {
+    "north": 70221,
+    "south": 70222,
+    "name": "Sunnyvale"
+  },
+  {
+    "north": 70231,
+    "south": 70232,
+    "name": "Lawrence"
+  },
+  {
+    "north": 70241,
+    "south": 70242,
+    "name": "Santa Clara"
+  },
+  {
+    "north": 70251,
+    "south": 70252,
+    "name": "College Park"
+  },
+  {
+    "north": 70261,
+    "south": 70262,
+    "name": "San Jose Diridon"
+  },
+  {
+    "north": 70271,
+    "south": 70272,
+    "name": "Tamien"
+  },
+  {
+    "north": 70281,
+    "south": 70282,
+    "name": "Capitol"
+  },
+  {
+    "north": 70291,
+    "south": 70292,
+    "name": "Blossom Hill"
+  },
+  {
+    "north": 70301,
+    "south": 70302,
+    "name": "Morgan Hill"
+  },
+  {
+    "north": 70311,
+    "south": 70312,
+    "name": "San Martin"
+  },
+  {
+    "north": 70321,
+    "south": 70322,
+    "name": "Gilroy"
+  }
+]
