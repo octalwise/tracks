@@ -71,7 +71,7 @@ struct StationView: View {
                         ).gridColumnAlignment(.trailing)
                     }
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                    .colorMultiply(!data.2 ? .gray : .white)
+                    .opacity(!data.2 ? 0.6 : 1.0)
                 }
             }
         }.navigationTitle(self.station.name)

@@ -69,7 +69,7 @@ struct TrainView: View {
                             .gridColumnAlignment(.trailing)
                     }
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                    .colorMultiply(!data.3 ? .gray : .white)
+                    .opacity(!data.3 ? 0.6 : 1.0)
                 }
             }
         }.navigationTitle(
