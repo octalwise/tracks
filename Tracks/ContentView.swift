@@ -130,13 +130,17 @@ struct ContentView: View {
 
     // fetch realtime trains
     func fetchRealtime() {
-        let url = URL(string: "http://localhost:3000/trains")!
+        let url = URL(string: "https://tracks-api.ayukmr.com/trains")!
+
+        // add auth header
+        var request = URLRequest(url: url)
+        request.setValue("AUTH", forHTTPHeaderField: "Authorization")
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
         // fetch data from server
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
                     let data = try decoder.decode([Train].self, from: data)
@@ -169,13 +173,17 @@ struct ContentView: View {
 
     // fetch alerts
     func fetchAlerts() {
-        let url = URL(string: "http://localhost:3000/alerts")!
+        let url = URL(string: "https://tracks-api.ayukmr.com/alerts")!
+
+        // add auth header
+        var request = URLRequest(url: url)
+        request.setValue("AUTH", forHTTPHeaderField: "Authorization")
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
         // fetch data from server
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
                     let data = try decoder.decode([Alert].self, from: data)
