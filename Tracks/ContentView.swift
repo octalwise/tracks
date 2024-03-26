@@ -130,7 +130,7 @@ struct ContentView: View {
 
     // fetch realtime trains
     func fetchRealtime() {
-        let url = URL(string: "https://tracks-api.ayukmr.com/trains")!
+        let url = URL(string: "https://tracks-api.octalwise.com/trains")!
 
         // add auth header
         var request = URLRequest(url: url)
@@ -173,7 +173,7 @@ struct ContentView: View {
 
     // fetch alerts
     func fetchAlerts() {
-        let url = URL(string: "https://tracks-api.ayukmr.com/alerts")!
+        let url = URL(string: "https://tracks-api.octalwise.com/alerts")!
 
         // add auth header
         var request = URLRequest(url: url)
