@@ -51,21 +51,25 @@ struct TrainView: View {
                             Spacer()
                         }
                         .gridColumnAlignment(.leading)
-                        .gridCellColumns(data.2 >= 1 ? 1 : 2)
 
-                        if data.2 >= 1 {
-                            // delay duration
-                            Text(String(
-                                format: "+%.0f min",
-                                data.0.scheduled.distance(to: data.0.expected) / 60
-                            ))
-                            .gridColumnAlignment(.trailing)
-                            .foregroundColor(.red)
+                        HStack {
+                            if data.2 >= 1 {
+                                // delay duration
+                                Text(String(
+                                    format: "+%.0f",
+                                    data.0.scheduled.distance(to: data.0.expected) / 60
+                                ))
+                                .foregroundColor(.red)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                            }
+
+                            // arrival time
+                            Text(
+                                data.0.expected
+                                    .formatted(date: .omitted, time: .shortened)
+                            ).monospacedDigit()
                         }
-
-                        // arrival time
-                        Text(data.0.expected.formatted(date: .omitted, time: .shortened))
-                            .gridColumnAlignment(.trailing)
+                        .gridColumnAlignment(.trailing)
                     }
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                     .opacity(!data.3 ? 0.6 : 1.0)
