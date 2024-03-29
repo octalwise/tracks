@@ -88,6 +88,9 @@ struct StationView: View {
             .filter {
                 $0.0.direction == direction && $0.1 != nil
             }
+            .sorted {
+                $0.1!.expected < $1.1!.expected
+            }
             .map {
                 (
                     $0.0,

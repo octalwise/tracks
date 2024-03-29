@@ -84,6 +84,9 @@ struct TrainView: View {
             .filter {
                 train.location == nil || $0.station != train.location
             }
+            .sorted {
+                $0.expected < $1.expected
+            }
             .map { stop in
                 (
                     stop,

@@ -110,7 +110,7 @@ struct TripsView: View {
                 $0.1 != nil && $0.2 != nil &&
                     $0.0.stops.firstIndex(of: $0.1!)! < $0.0.stops.firstIndex(of: $0.2!)!
             }
-            .map    {
+            .map {
                 (
                     $0.0,
                     $0.1!,
@@ -118,6 +118,8 @@ struct TripsView: View {
                     $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
-            .sorted { $0.2.expected < $1.2.expected }
+            .sorted {
+                $0.1.expected < $1.1.expected
+            }
     }
 }
