@@ -38,6 +38,6 @@ struct AlertsView: View {
                     }.gridColumnAlignment(.leading)
                 }.padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
             }
-        }
+        }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
     }
 }
