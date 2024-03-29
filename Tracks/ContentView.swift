@@ -49,8 +49,12 @@ struct ContentView: View {
                             stations: self.stations!,
                             trains:   self.trains!,
 
-                            from: self.stations!.first { $0.name == "Menlo Park" }!,
-                            to:   self.stations!.first { $0.name == "Hillsdale" }!
+                            from: self.stations!.first {
+                                $0.name == "Menlo Park"
+                            }!,
+                            to: self.stations!.first {
+                                $0.name == "Hillsdale"
+                            }!
                         )
                     } else {
                         ProgressView() {

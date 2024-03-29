@@ -45,8 +45,7 @@ struct TrainView: View {
                                     stations: self.stations
                                 )
                             } label: {
-                                Text(data.1.name)
-                                    .lineLimit(1)
+                                Text(data.1.name).lineLimit(1)
                             }
 
                             Spacer()
