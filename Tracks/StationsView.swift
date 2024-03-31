@@ -42,7 +42,7 @@ struct StationsView: View {
                             stations: self.stations
                         )
                     } label: {
-                        Text(data.0.name)
+                        Text(data.0.name).lineLimit(1)
                     }
 
                     if data.2 != nil {
