@@ -70,7 +70,7 @@ struct StationView: View {
                                 .formatted(date: .omitted, time: .shortened)
                         ).gridColumnAlignment(.trailing)
                     }
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                    .padding([.leading, .trailing], 20)
                     .opacity(!data.2 ? 0.6 : 1.0)
                 }
             }

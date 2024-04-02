@@ -36,8 +36,8 @@ struct AlertsView: View {
                         .lineLimit(1)
                         .multilineTextAlignment(.leading)
                     }.gridColumnAlignment(.leading)
-                }.padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15))
+                }.padding([.leading, .trailing], 15)
             }
-        }.padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+        }.padding(.top, 5)
     }
 }

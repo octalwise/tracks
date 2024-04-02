@@ -60,7 +60,7 @@ struct TrainView: View {
                                     data.0.scheduled.distance(to: data.0.expected) / 60
                                 ))
                                 .foregroundColor(.red)
-                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
+                                .padding(.trailing, 10)
                             }
 
                             // arrival time
@@ -71,7 +71,7 @@ struct TrainView: View {
                         }
                         .gridColumnAlignment(.trailing)
                     }
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                    .padding([.leading, .trailing], 10)
                     .opacity(!data.3 ? 0.6 : 1.0)
                 }
             }
