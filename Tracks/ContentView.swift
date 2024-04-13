@@ -113,7 +113,7 @@ struct ContentView: View {
             createScheduled()
         } else {
             self.trains = self.scheduled!.fetchScheduled()
-            self.fetchRealtime()
+            self.fetchLive()
         }
     }
 
@@ -127,13 +127,13 @@ struct ContentView: View {
                 let scheduled = Scheduled(html: String(data: data, encoding: .utf8)!)
 
                 self.trains = scheduled.fetchScheduled()
-                self.fetchRealtime()
+                self.fetchLive()
             }
         }.resume()
     }
 
-    // fetch realtime trains
-    func fetchRealtime() {
+    // fetch live trains
+    func fetchLive() {
         let url = URL(string: "https://tracks-api.octalwise.com/trains")!
 
         // add auth header
