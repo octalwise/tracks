@@ -15,6 +15,9 @@ struct ScheduledStop {
     let train:   Int
 }
 
+// strings as errors
+extension String: Error {}
+
 // scheduled trains fetcher
 struct Scheduled {
     var trains: [ScheduledTrain]
@@ -69,7 +72,10 @@ struct Scheduled {
                         formatter.dateFormat = "hh:mma"
                         formatter.timeZone   = TimeZone(abbreviation: "PST")
 
-                        let time = formatter.date(from: try timepoint.text())!
+                        // guard invalid times
+                        guard let time = formatter.date(from: try timepoint.text()) else {
+                            throw "Invalid time format in Caltrain data."
+                        }
 
                         // add scheduled stop
                         self.stops.append(
@@ -82,7 +88,10 @@ struct Scheduled {
                     }
                 }
             }
-        } catch {}
+        } catch {
+            self.trains = []
+            self.stops  = []
+        }
     }
 
     // fetch trains
