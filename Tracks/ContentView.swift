@@ -119,7 +119,7 @@ struct ContentView: View {
 
     // create scheduled
     func createScheduled() {
-        let url = URL(string: "https://www.caltrain.com/?active_tab=route_explorer_tab")!
+        let url = URL(string: "https://www.caltrain.com")!
 
         // fetch caltrain site
         URLSession.shared.dataTask(with: url) { data, response, error in
