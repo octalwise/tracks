@@ -72,7 +72,7 @@ struct TripsView: View {
                     } label: {
                         HStack {
                             Image(systemName: "tram.fill")
-                                .foregroundColor(data.0.lineColor())
+                                .foregroundColor(data.0.routeColor())
 
                             Text(String(data.0.id))
                         }

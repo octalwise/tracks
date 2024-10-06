@@ -58,7 +58,7 @@ struct StationView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "tram.fill")
-                                   .foregroundColor(data.0.lineColor())
+                                   .foregroundColor(data.0.routeColor())
 
                                 Text("Train \(data.0.id)")
                             }

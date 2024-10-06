@@ -12,8 +12,8 @@ struct Train: Codable, Hashable {
     // direction
     let direction: String
 
-    // line
-    let line: String
+    // route
+    let route: String
 
     // current location
     let location: Int?
@@ -21,9 +21,9 @@ struct Train: Codable, Hashable {
     // all stops
     let stops: [Stop]
 
-    // line color
-    func lineColor() -> Color {
-        switch self.line {
+    // route color
+    func routeColor() -> Color {
+        switch self.route {
         case "Local Weekday", "Local Weekend":
             return .gray
 

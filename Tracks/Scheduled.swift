@@ -5,7 +5,7 @@ import SwiftSoup
 struct ScheduledTrain {
     let id:        Int
     let direction: String
-    let line:      String
+    let route:     String
 }
 
 // scheduled stop
@@ -44,14 +44,14 @@ struct Scheduled {
                     "tr:first-child td.schedule-trip-header[data-service-type=\(dayType)]"
                 ) {
                     let train = Int(try header.attr("data-trip-id"))!
-                    let line  = try header.attr("data-route-id")
+                    let route = try header.attr("data-route-id")
 
                     // add scheduled train
                     self.trains.append(
                         ScheduledTrain(
                             id: train,
                             direction: direction,
-                            line: line
+                            route: route
                         )
                     )
                 }
@@ -153,7 +153,7 @@ struct Scheduled {
                 live: false,
 
                 direction: train.direction,
-                line:      train.line,
+                route:     train.route,
                 location:  location,
 
                 stops: trainStops.map {
