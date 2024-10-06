@@ -30,7 +30,7 @@ struct StationsView: View {
                                 .foregroundColor(data.1!.lineColor())
                         }.gridColumnAlignment(.leading)
                     } else {
-                        Image(systemName: "chevron.up")
+                        Image(systemName: "chevron.down")
                             .gridColumnAlignment(.leading)
                     }
 
@@ -58,7 +58,7 @@ struct StationsView: View {
                                 .foregroundColor(data.2!.lineColor())
                         }.gridColumnAlignment(.trailing)
                     } else {
-                        Image(systemName: "chevron.down")
+                        Image(systemName: "chevron.up")
                             .gridColumnAlignment(.trailing)
                     }
                 }.padding([.leading, .trailing], 20)
@@ -72,8 +72,8 @@ struct StationsView: View {
             .map { station in
                 (
                     station,
-                    trains.first { $0.id == station.north.train },
-                    trains.first { $0.id == station.south.train }
+                    trains.first { $0.id == station.south.train },
+                    trains.first { $0.id == station.north.train }
                 )
             }
     }
