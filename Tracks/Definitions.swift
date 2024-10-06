@@ -24,14 +24,17 @@ struct Train: Codable, Hashable {
     // line color
     func lineColor() -> Color {
         switch self.line {
-        case "L1":
+        case "Local Weekday", "Local Weekend":
             return .gray
 
-        case "L3", "L4", "L5":
-            return .yellow
+        case "Limited":
+            return .cyan
 
-        case "B7":
+        case "Express":
             return .red
+
+        case "South County Connector":
+            return .yellow
 
         default:
             return .gray
