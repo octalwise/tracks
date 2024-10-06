@@ -49,10 +49,10 @@ struct ContentView: View {
                             trains:   self.trains!,
 
                             from: self.stations!.first {
-                                $0.name == "Menlo Park"
+                                $0.name == "Palo Alto"
                             }!,
                             to: self.stations!.first {
-                                $0.name == "Hillsdale"
+                                $0.name == "San Mateo"
                             }!
                         )
                     } else {
