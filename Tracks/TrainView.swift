@@ -71,7 +71,7 @@ struct TrainView: View {
                         }
                         .gridColumnAlignment(.trailing)
                     }
-                    .padding([.leading, .trailing], 10)
+                    .padding([.leading, .trailing], 20)
                     .opacity(!data.3 ? 0.6 : 1.0)
                 }
             }

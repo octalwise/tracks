@@ -61,7 +61,7 @@ struct StationsView: View {
                         Image(systemName: "chevron.down")
                             .gridColumnAlignment(.trailing)
                     }
-                }.padding([.leading, .trailing], 10)
+                }.padding([.leading, .trailing], 20)
             }
         }.padding(.top, 10)
     }

@@ -39,7 +39,6 @@ struct ContentView: View {
             .tabItem {
                 Label("Stations", systemImage: "house.fill")
             }
-            .padding()
 
             // trips view
             NavigationStack {
@@ -66,7 +65,6 @@ struct ContentView: View {
             .tabItem {
                 Label("Trips", systemImage: "map.fill")
             }
-            .padding()
 
             // alerts view
             NavigationStack {
@@ -83,7 +81,6 @@ struct ContentView: View {
             .tabItem {
                 Label("Alerts", systemImage: "exclamationmark.triangle.fill")
             }
-            .padding()
         }
         .onAppear {
             self.fetchTrains()
