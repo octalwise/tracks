@@ -23,7 +23,8 @@ struct StationView: View {
                 Text("Southbound").tag("S")
             }
             .pickerStyle(.segmented)
-            .padding()
+            .padding(.top, 15)
+            .padding([.leading, .trailing], 15)
 
             HStack {
                 // toggle past trains
@@ -32,7 +33,7 @@ struct StationView: View {
                 }.toggleStyle(CheckboxStyle())
 
                 Spacer()
-            }.padding()
+            }.padding(15)
 
             Grid {
                 ForEach(
@@ -70,7 +71,7 @@ struct StationView: View {
                                 .formatted(date: .omitted, time: .shortened)
                         ).gridColumnAlignment(.trailing)
                     }
-                    .padding([.leading, .trailing], 20)
+                    .padding([.leading, .trailing], 15)
                     .opacity(!data.2 ? 0.6 : 1.0)
                 }
             }

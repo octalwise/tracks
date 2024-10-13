@@ -61,9 +61,9 @@ struct StationsView: View {
                         Image(systemName: "chevron.up")
                             .gridColumnAlignment(.trailing)
                     }
-                }.padding([.leading, .trailing], 20)
+                }.padding([.leading, .trailing], 15)
             }
-        }.padding(.top, 10)
+        }.padding(.top, 15)
     }
 
     // get trains for station

@@ -66,7 +66,7 @@ struct TripsView: View {
             }.toggleStyle(CheckboxStyle())
 
             Spacer()
-        }.padding()
+        }.padding(15)
 
         Grid {
             ForEach(
@@ -106,7 +106,7 @@ struct TripsView: View {
                     Text(data.2.expected.formatted(date: .omitted, time: .shortened))
                         .gridColumnAlignment(.trailing)
                 }
-                .padding([.leading, .trailing], 20)
+                .padding([.leading, .trailing], 15)
                 .opacity(!data.3 ? 0.6 : 1.0)
             }
         }

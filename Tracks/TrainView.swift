@@ -20,7 +20,7 @@ struct TrainView: View {
                 }.toggleStyle(CheckboxStyle())
 
                 Spacer()
-            }.padding()
+            }.padding(15)
 
             Grid {
                 ForEach(
@@ -71,7 +71,7 @@ struct TrainView: View {
                         }
                         .gridColumnAlignment(.trailing)
                     }
-                    .padding([.leading, .trailing], 20)
+                    .padding([.leading, .trailing], 15)
                     .opacity(!data.3 ? 0.6 : 1.0)
                 }
             }
