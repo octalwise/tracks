@@ -32,7 +32,7 @@ struct ContentView: View {
                     } else {
                         ProgressView() {
                             Text("Loading Trains")
-                        }
+                        }.padding(15)
                     }
                 }.navigationTitle("Stations")
             }
@@ -58,7 +58,7 @@ struct ContentView: View {
                     } else {
                         ProgressView() {
                             Text("Loading Trains")
-                        }
+                        }.padding(15)
                     }
                 }.navigationTitle("Trips")
             }
@@ -74,7 +74,7 @@ struct ContentView: View {
                     } else {
                         ProgressView() {
                             Text("Loading Alerts")
-                        }
+                        }.padding(15)
                     }
                 }.navigationTitle("Alerts")
             }
