@@ -18,26 +18,46 @@ struct TripsView: View {
     var body: some View {
         HStack {
             // from station
-            Picker("From", selection: $from) {
-                ForEach(self.stations, id: \.self) { station in
-                    Text(station.name)
+            Menu {
+                Picker("From", selection: $from) {
+                    ForEach(self.stations, id: \.self) { station in
+                        Text(station.name)
+                    }
                 }
+            } label: {
+                Text(from.name)
+                    .lineLimit(1)
+                    .padding(.trailing, -3)
+
+                Image(systemName: "chevron.up.chevron.down")
             }
 
             // flip route
             Button(action: {
-                (self.from, self.to) = (self.to, self.from)
+                withAnimation(.none) {
+                    (self.from, self.to) = (self.to, self.from)
+                }
             }) {
                 Image(systemName: "arrow.right.arrow.left")
-            }
+            }.padding([.leading, .trailing], 5)
 
             // to station
-            Picker("To", selection: $to) {
-                ForEach(self.stations, id: \.self) { station in
-                    Text(station.name)
+            Menu {
+                Picker("To", selection: $to) {
+                    ForEach(self.stations, id: \.self) { station in
+                        Text(station.name)
+                    }
                 }
+            } label: {
+                Text(to.name)
+                    .lineLimit(1)
+                    .padding(.trailing, -3)
+
+                Image(systemName: "chevron.up.chevron.down")
             }
         }
+        .padding(.top, 10)
+        .padding([.leading, .trailing], 15)
 
         HStack {
             // toggle past trains
