@@ -24,7 +24,7 @@ struct Train: Codable, Hashable {
     // route color
     func routeColor() -> Color {
         switch self.route {
-        case "Local Weekday", "Local Weekend":
+        case "Local":
             return .gray
 
         case "Limited":
