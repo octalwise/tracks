@@ -74,7 +74,7 @@ struct StationView: View {
                     .padding([.leading, .trailing], 15)
                     .opacity(!data.2 ? 0.6 : 1.0)
                 }
-            }
+            }.padding(.bottom, 15)
         }.navigationTitle(self.station.name)
     }
 

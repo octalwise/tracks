@@ -109,7 +109,7 @@ struct TripsView: View {
                 .padding([.leading, .trailing], 15)
                 .opacity(!data.3 ? 0.6 : 1.0)
             }
-        }
+        }.padding(.bottom, 15)
     }
 
     // get trains with stops

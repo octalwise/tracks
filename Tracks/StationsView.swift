@@ -63,7 +63,7 @@ struct StationsView: View {
                     }
                 }.padding([.leading, .trailing], 15)
             }
-        }.padding(.top, 15)
+        }.padding([.top, .bottom], 15)
     }
 
     // get trains for station

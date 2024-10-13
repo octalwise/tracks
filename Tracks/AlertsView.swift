@@ -38,6 +38,8 @@ struct AlertsView: View {
                     }.gridColumnAlignment(.leading)
                 }.padding([.leading, .trailing], 15)
             }
-        }.padding(.top, 10)
+        }
+        .padding(.top, 10)
+        .padding(.bottom, 15)
     }
 }
