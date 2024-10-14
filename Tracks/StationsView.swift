@@ -27,7 +27,7 @@ struct StationsView: View {
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundColor(data.1!.routeColor())
+                                .foregroundStyle(data.1!.routeColor())
                         }.gridColumnAlignment(.leading)
                     } else {
                         Image(systemName: "chevron.down")
@@ -55,7 +55,7 @@ struct StationsView: View {
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundColor(data.2!.routeColor())
+                                .foregroundStyle(data.2!.routeColor())
                         }.gridColumnAlignment(.trailing)
                     } else {
                         Image(systemName: "chevron.up")

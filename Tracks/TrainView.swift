@@ -59,7 +59,7 @@ struct TrainView: View {
                                     format: "+%.0f",
                                     data.0.scheduled.distance(to: data.0.expected) / 60
                                 ))
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                                 .padding(.trailing, 10)
                             }
 
