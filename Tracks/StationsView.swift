@@ -21,8 +21,8 @@ struct StationsView: View {
                         // northbound train
                         NavigationLink {
                             TrainView(
-                                train: data.1!,
-                                trains: self.trains,
+                                train:    data.1!,
+                                trains:   self.trains,
                                 stations: self.stations
                             )
                         } label: {
@@ -37,8 +37,8 @@ struct StationsView: View {
                     // station text
                     NavigationLink {
                         StationView(
-                            station: data.0,
-                            trains: self.trains,
+                            station:  data.0,
+                            trains:   self.trains,
                             stations: self.stations
                         )
                     } label: {
@@ -49,8 +49,8 @@ struct StationsView: View {
                         // southbound train
                         NavigationLink {
                             TrainView(
-                                train: data.2!,
-                                trains: self.trains,
+                                train:    data.2!,
+                                trains:   self.trains,
                                 stations: self.stations
                             )
                         } label: {

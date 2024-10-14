@@ -40,8 +40,8 @@ struct TrainView: View {
                             // stop station
                             NavigationLink {
                                 StationView(
-                                    station: data.1,
-                                    trains: self.trains,
+                                    station:  data.1,
+                                    trains:   self.trains,
                                     stations: self.stations
                                 )
                             } label: {
