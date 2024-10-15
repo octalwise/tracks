@@ -20,6 +20,11 @@ struct TrainView: View {
                 }.toggleStyle(CheckboxStyle())
 
                 Spacer()
+
+                Text(train.route)
+                    .foregroundStyle(train.routeColor())
+                    .padding(.leading, 15)
+                    .lineLimit(1)
             }.padding(15)
 
             Grid {
