@@ -34,7 +34,7 @@ struct AlertItem: View {
         VStack {
             Button(action: {
                 withAnimation(.none) {
-                    // toggle multiple lines
+                    // toggle expanded alert
                     expanded = !expanded
                 }
             }) {
