@@ -55,7 +55,7 @@ struct AlertItem: View {
                 }
             }
 
-            if alert.description != nil && expanded {
+            if alert.description != nil && !alert.description!.isEmpty && expanded {
                 // description
                 HStack {
                     Text(alert.description!)
