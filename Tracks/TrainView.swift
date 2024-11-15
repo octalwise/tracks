@@ -72,7 +72,7 @@ struct TrainView: View {
                             Text(
                                 data.0.expected
                                     .formatted(date: .omitted, time: .shortened)
-                            )
+                            ).monospacedDigit()
                         }
                         .gridColumnAlignment(.trailing)
                     }

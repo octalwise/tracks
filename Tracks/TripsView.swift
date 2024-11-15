@@ -100,10 +100,12 @@ struct TripsView: View {
 
                     // start time
                     Text(data.1.expected.formatted(date: .omitted, time: .shortened))
+                        .monospacedDigit()
                         .gridColumnAlignment(.trailing)
 
                     // end time
                     Text(data.2.expected.formatted(date: .omitted, time: .shortened))
+                        .monospacedDigit()
                         .gridColumnAlignment(.trailing)
                 }
                 .padding([.leading, .trailing], 15)
