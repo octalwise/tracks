@@ -54,8 +54,7 @@ struct TrainView: View {
                             }
 
                             Spacer()
-                        }
-                        .gridColumnAlignment(.leading)
+                        }.gridColumnAlignment(.leading)
 
                         HStack {
                             if data.2 >= 1 {
@@ -73,8 +72,7 @@ struct TrainView: View {
                                 data.0.expected
                                     .formatted(date: .omitted, time: .shortened)
                             ).monospacedDigit()
-                        }
-                        .gridColumnAlignment(.trailing)
+                        }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 15)
                     .opacity(!data.3 ? 0.6 : 1.0)
