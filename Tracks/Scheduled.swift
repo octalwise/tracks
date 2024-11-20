@@ -44,7 +44,11 @@ struct Scheduled {
                     "tr:first-child td.schedule-trip-header[data-service-type=\(dayType)]"
                 ) {
                     let train = Int(try header.attr("data-trip-id"))!
-                    let route = try header.attr("data-route-id")
+                    let fullRoute = try header.attr("data-route-id")
+
+                    // remove local suffix
+                    let isLocal = fullRoute == "Local Weekday" || fullRoute == "Local Weekend"
+                    let route   = isLocal ? "Local" : fullRoute
 
                     // add scheduled train
                     self.trains.append(
