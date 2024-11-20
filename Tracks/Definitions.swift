@@ -33,7 +33,7 @@ struct Train: Codable, Hashable {
         case "Express":
             return .red
 
-        case "South County Connector":
+        case "South County":
             return .yellow
 
         default:
