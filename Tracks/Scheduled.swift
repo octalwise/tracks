@@ -15,8 +15,11 @@ struct ScheduledStop {
     let train:   Int
 }
 
-// strings as errors
-extension String: Error {}
+// error handling
+enum ScheduledError: Error {
+    case formatError(String)
+}
+
 
 // scheduled trains fetcher
 struct Scheduled {
@@ -78,7 +81,7 @@ struct Scheduled {
 
                         // guard invalid times
                         guard let time = formatter.date(from: try timepoint.text()) else {
-                            throw "Invalid time format in Caltrain data."
+                            throw ScheduledError.formatError("Invalid time format in Caltrain data.")
                         }
 
                         // add scheduled stop
