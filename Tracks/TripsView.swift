@@ -155,7 +155,7 @@ struct TripsView: View {
                     // to stop
                     to: to!,
 
-                    // check if past train
+                    // check if past stop
                     past: from!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
