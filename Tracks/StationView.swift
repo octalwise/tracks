@@ -115,7 +115,7 @@ struct StationView: View {
                     // station stop
                     $0.1!,
 
-                    // check if delayed
+                    // check if past train
                     $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }

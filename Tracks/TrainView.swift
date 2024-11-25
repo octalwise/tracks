@@ -112,7 +112,7 @@ struct TrainView: View {
                     // delay time
                     stop.scheduled.distance(to: stop.expected) / 60,
 
-                    // check if delayed
+                    // check if past train
                     stop.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
