@@ -13,7 +13,7 @@ struct TrainView: View {
 
     var body: some View {
         let stopStations =
-            self.stopStations().filter { self.showPast || $0.3 }
+            self.stopStations().filter { self.showPast || !$0.past }
 
         ScrollView {
             HStack {
@@ -33,8 +33,10 @@ struct TrainView: View {
             Grid {
                 ForEach(
                     Array(stopStations.enumerated()),
-                    id: \.1.0.self
+                    id: \.1.stop.self
                 ) { index, data in
+                    let (stop, station, delay, past) = data
+
                     if index > 0 {
                         Divider()
                     }
@@ -44,23 +46,23 @@ struct TrainView: View {
                             // stop station
                             NavigationLink {
                                 StationView(
-                                    station:  data.1,
+                                    station:  station,
                                     trains:   self.trains,
                                     stations: self.stations
                                 )
                             } label: {
-                                Text(data.1.name).lineLimit(1)
+                                Text(station.name).lineLimit(1)
                             }
 
                             Spacer()
                         }.gridColumnAlignment(.leading)
 
                         HStack {
-                            if data.2 >= 1 {
+                            if delay >= 1 {
                                 // delay duration
                                 Text(String(
                                     format: "+%.0f",
-                                    data.0.scheduled.distance(to: data.0.expected) / 60
+                                    stop.scheduled.distance(to: stop.expected) / 60
                                 ))
                                 .foregroundStyle(.red)
                                 .padding(.trailing, 10)
@@ -68,13 +70,13 @@ struct TrainView: View {
 
                             // arrival time
                             Text(
-                                data.0.expected
+                                stop.expected
                                     .formatted(date: .omitted, time: .shortened)
                             ).monospacedDigit()
                         }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 15)
-                    .opacity(!data.3 ? 0.6 : 1.0)
+                    .opacity(past ? 0.6 : 1.0)
                 }
 
                 if stopStations.count == 1 {
@@ -88,7 +90,7 @@ struct TrainView: View {
     }
 
     // get stops with stations
-    func stopStations() -> [(Stop, BothStations, Double, Bool)] {
+    func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {
         self.train
             .stops
             .filter {
@@ -102,18 +104,18 @@ struct TrainView: View {
             .map { stop in
                 (
                     // train stop
-                    stop,
+                    stop: stop,
 
                     // stop station
-                    stations.first {
+                    station: stations.first {
                         $0.north.id == stop.station || $0.south.id == stop.station
                     }!,
 
                     // delay time
-                    stop.scheduled.distance(to: stop.expected) / 60,
+                    delay: stop.scheduled.distance(to: stop.expected) / 60,
 
                     // check if past train
-                    stop.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: stop.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
     }

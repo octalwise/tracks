@@ -17,7 +17,7 @@ struct StationView: View {
 
     var body: some View {
         let stopTrains =
-            self.stopTrains().filter { self.showPast || $0.2 }
+            self.stopTrains().filter { self.showPast || !$0.past }
 
         ScrollView {
             // select direction
@@ -41,8 +41,10 @@ struct StationView: View {
             Grid {
                 ForEach(
                     Array(stopTrains.enumerated()),
-                    id: \.1.0.self
+                    id: \.1.train.self
                 ) { index, data in
+                    let (train, stop, past) = data
+
                     if index > 0 {
                         Divider()
                     }
@@ -51,29 +53,29 @@ struct StationView: View {
                         // train
                         NavigationLink {
                             TrainView(
-                                train:    data.0,
+                                train:    train,
                                 trains:   self.trains,
                                 stations: self.stations
                             )
                         } label: {
                             HStack {
                                 Image(systemName: "tram.fill")
-                                    .foregroundStyle(data.0.routeColor())
+                                    .foregroundStyle(train.routeColor())
 
-                                Text("Train \(data.0.id)")
+                                Text("Train \(train.id)")
                             }
                         }.gridColumnAlignment(.leading)
 
                         // arrival time
                         Text(
-                            data.1.expected
+                            stop.expected
                                 .formatted(date: .omitted, time: .shortened)
                         )
                         .monospacedDigit()
                         .gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 15)
-                    .opacity(!data.2 ? 0.6 : 1.0)
+                    .opacity(past ? 0.6 : 1.0)
                 }
 
                 if stopTrains.count == 1 {
@@ -85,38 +87,37 @@ struct StationView: View {
     }
 
     // get trains with stop
-    func stopTrains() -> [(Train, Stop, Bool)] {
+    func stopTrains() -> [(train: Train, stop: Stop, past: Bool)] {
         self.trains
             .map { train in
                 (
                     // train
-                    train,
+                    train: train,
 
                     // train stop in station
-                    train.stops.first {
-                        $0.station == self.station.north.id
-                            || $0.station == self.station.south.id
+                    stop: train.stops.first {
+                        $0.station == self.station.north.id || $0.station == self.station.south.id
                     }
                 )
             }
-            .filter {
+            .filter { (train, stop) in
                 // filter trains going in direction and stopping at station
-                $0.0.direction == direction && $0.1 != nil
+                train.direction == direction && stop != nil
             }
             .sorted {
                 // sort by expected stop time
-                $0.1!.expected < $1.1!.expected
+                $0.stop!.expected < $1.stop!.expected
             }
-            .map {
+            .map { (train, stop) in
                 (
                     // train
-                    $0.0,
+                    train: train,
 
                     // station stop
-                    $0.1!,
+                    stop: stop!,
 
                     // check if past train
-                    $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    stop!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
     }

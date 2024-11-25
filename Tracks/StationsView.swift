@@ -12,24 +12,26 @@ struct StationsView: View {
         Grid {
             ForEach(
                 Array(stationTrains.enumerated()),
-                id: \.1.0.self
+                id: \.1.station.self
             ) { index, data in
+                let (station, south, north) = data
+
                 if index > 0 {
                     Divider()
                 }
 
                 GridRow {
-                    if data.1 != nil {
-                        // northbound train
+                    if south != nil {
+                        // southbound train
                         NavigationLink {
                             TrainView(
-                                train:    data.1!,
+                                train:    south!,
                                 trains:   self.trains,
                                 stations: self.stations
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundStyle(data.1!.routeColor())
+                                .foregroundStyle(south!.routeColor())
                         }.gridColumnAlignment(.leading)
                     } else {
                         Image(systemName: "chevron.down")
@@ -39,25 +41,25 @@ struct StationsView: View {
                     // station text
                     NavigationLink {
                         StationView(
-                            station:  data.0,
+                            station:  station,
                             trains:   self.trains,
                             stations: self.stations
                         )
                     } label: {
-                        Text(data.0.name).lineLimit(1)
+                        Text(station.name).lineLimit(1)
                     }
 
-                    if data.2 != nil {
-                        // southbound train
+                    if north != nil {
+                        // northbound train
                         NavigationLink {
                             TrainView(
-                                train:    data.2!,
+                                train:    north!,
                                 trains:   self.trains,
                                 stations: self.stations
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundStyle(data.2!.routeColor())
+                                .foregroundStyle(north!.routeColor())
                         }.gridColumnAlignment(.trailing)
                     } else {
                         Image(systemName: "chevron.up")
@@ -74,13 +76,13 @@ struct StationsView: View {
     }
 
     // get trains for station
-    func stationTrains() -> [(BothStations, Train?, Train?)] {
+    func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {
         self.stations
             .map { station in
                 (
-                    station,
-                    trains.first { $0.id == station.south.train },
-                    trains.first { $0.id == station.north.train }
+                    station: station,
+                    south:   trains.first { $0.id == station.south.train },
+                    north:   trains.first { $0.id == station.north.train }
                 )
             }
     }

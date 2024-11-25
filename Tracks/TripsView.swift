@@ -17,7 +17,7 @@ struct TripsView: View {
 
     var body: some View {
         let trainsStops =
-            self.trainsStops().filter { self.showPast || $0.3 }
+            self.trainsStops().filter { self.showPast || !$0.past }
 
         HStack {
             // from station
@@ -74,8 +74,10 @@ struct TripsView: View {
         Grid {
             ForEach(
                 Array(trainsStops.enumerated()),
-                id: \.1.0
+                id: \.1.train.self
             ) { index, data in
+                let (train, from, to, past) = data
+
                 if index > 0 {
                     Divider()
                 }
@@ -84,31 +86,31 @@ struct TripsView: View {
                     // trip train
                     NavigationLink {
                         TrainView(
-                            train:    data.0,
+                            train:    train,
                             trains:   self.trains,
                             stations: self.stations
                         )
                     } label: {
                         HStack {
                             Image(systemName: "tram.fill")
-                                .foregroundStyle(data.0.routeColor())
+                                .foregroundStyle(train.routeColor())
 
-                            Text(String(data.0.id))
+                            Text(String(train.id))
                         }
                     }.gridColumnAlignment(.leading)
 
                     // start time
-                    Text(data.1.expected.formatted(date: .omitted, time: .shortened))
+                    Text(from.expected.formatted(date: .omitted, time: .shortened))
                         .monospacedDigit()
                         .gridColumnAlignment(.trailing)
 
                     // end time
-                    Text(data.2.expected.formatted(date: .omitted, time: .shortened))
+                    Text(to.expected.formatted(date: .omitted, time: .shortened))
                         .monospacedDigit()
                         .gridColumnAlignment(.trailing)
                 }
                 .padding([.leading, .trailing], 15)
-                .opacity(!data.3 ? 0.6 : 1.0)
+                .opacity(past ? 0.6 : 1.0)
             }
 
             if trainsStops.count == 1 {
@@ -119,47 +121,47 @@ struct TripsView: View {
     }
 
     // get trains with stops
-    func trainsStops() -> [(Train, Stop, Stop, Bool)] {
+    func trainsStops() -> [(train: Train, from: Stop, to: Stop, past: Bool)] {
         self.trains
             .map { train in
                 (
                     // train
-                    train,
+                    train: train,
 
                     // stop at from station
-                    train.stops.first {
+                    from: train.stops.first {
                         $0.station == self.from.north.id || $0.station == self.from.south.id
                     },
 
                     // stop at to station
-                    train.stops.first {
+                    to: train.stops.first {
                         $0.station == self.to.north.id || $0.station == self.to.south.id
                     }
                 )
             }
-            .filter {
+            .filter { (train: Train, from: Stop?, to: Stop?) in
                 // filter trains with stops and from stop is before to stop
-                $0.1 != nil && $0.2 != nil &&
-                    $0.0.stops.firstIndex(of: $0.1!)! < $0.0.stops.firstIndex(of: $0.2!)!
+                from != nil && to != nil &&
+                    train.stops.firstIndex(of: from!)! < train.stops.firstIndex(of: to!)!
             }
-            .map {
+            .map { (train, from, to) in
                 (
                     // train
-                    $0.0,
+                    train: train,
 
                     // from stop
-                    $0.1!,
+                    from: from!,
 
                     // to stop
-                    $0.2!,
+                    to: to!,
 
                     // check if past train
-                    $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: from!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
             .sorted {
                 // sort by expected stop time
-                $0.1.expected < $1.1.expected
+                $0.from.expected < $1.from.expected
             }
     }
 }

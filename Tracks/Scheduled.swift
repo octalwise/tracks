@@ -156,7 +156,7 @@ struct Scheduled {
 
             // create train
             return Train(
-                id: train.id,
+                id:   train.id,
                 live: false,
 
                 direction: train.direction,
