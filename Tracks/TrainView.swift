@@ -91,7 +91,7 @@ struct TrainView: View {
         .onAppear {
             if stopStations.count == 0 {
                 // show past if no future stops
-                showPast = true
+                self.showPast = true
             }
         }
     }
