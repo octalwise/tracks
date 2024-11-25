@@ -16,6 +16,9 @@ struct StationView: View {
     @State var showPast = false
 
     var body: some View {
+        let stopTrains =
+            self.stopTrains().filter { self.showPast || $0.2 }
+
         ScrollView {
             // select direction
             Picker("Direction", selection: self.$direction) {
@@ -37,11 +40,7 @@ struct StationView: View {
 
             Grid {
                 ForEach(
-                    Array(
-                        self.stopTrains()
-                            .filter { self.showPast || $0.2 }
-                            .enumerated()
-                    ),
+                    Array(stopTrains.enumerated()),
                     id: \.1.0.self
                 ) { index, data in
                     if index > 0 {
@@ -75,6 +74,11 @@ struct StationView: View {
                     }
                     .padding([.leading, .trailing], 15)
                     .opacity(!data.2 ? 0.6 : 1.0)
+                }
+
+                if stopTrains.count == 1 {
+                    // expand grid width
+                    Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
         }.navigationTitle(self.station.name)

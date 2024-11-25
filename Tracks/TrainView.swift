@@ -12,6 +12,9 @@ struct TrainView: View {
     @State var showPast = false
 
     var body: some View {
+        let stopStations =
+            self.stopStations().filter { self.showPast || $0.3 }
+
         ScrollView {
             HStack {
                 // toggle past stops
@@ -29,11 +32,7 @@ struct TrainView: View {
 
             Grid {
                 ForEach(
-                    Array(
-                        self.stopStations()
-                            .filter { self.showPast || $0.3 }
-                            .enumerated()
-                    ),
+                    Array(stopStations.enumerated()),
                     id: \.1.0.self
                 ) { index, data in
                     if index > 0 {
@@ -76,6 +75,11 @@ struct TrainView: View {
                     }
                     .padding([.leading, .trailing], 15)
                     .opacity(!data.3 ? 0.6 : 1.0)
+                }
+
+                if stopStations.count == 1 {
+                    // expand grid width
+                    Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
         }.navigationTitle(

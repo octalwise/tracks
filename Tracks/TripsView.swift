@@ -16,6 +16,9 @@ struct TripsView: View {
     @State var showPast = false
 
     var body: some View {
+        let trainsStops =
+            self.trainsStops().filter { self.showPast || $0.3 }
+
         HStack {
             // from station
             Menu {
@@ -70,11 +73,7 @@ struct TripsView: View {
 
         Grid {
             ForEach(
-                Array(
-                    self.trainsStops()
-                        .filter { self.showPast || $0.3 }
-                        .enumerated()
-                ),
+                Array(trainsStops.enumerated()),
                 id: \.1.0
             ) { index, data in
                 if index > 0 {
@@ -110,6 +109,11 @@ struct TripsView: View {
                 }
                 .padding([.leading, .trailing], 15)
                 .opacity(!data.3 ? 0.6 : 1.0)
+            }
+
+            if trainsStops.count == 1 {
+                // expand grid width
+                Divider().opacity(0)
             }
         }.padding(.bottom, 15)
     }

@@ -7,9 +7,11 @@ struct StationsView: View {
     let stations: [BothStations]
 
     var body: some View {
+        let stationTrains = self.stationTrains()
+
         Grid {
             ForEach(
-                Array(self.stationTrains().enumerated()),
+                Array(stationTrains.enumerated()),
                 id: \.1.0.self
             ) { index, data in
                 if index > 0 {
@@ -62,6 +64,11 @@ struct StationsView: View {
                             .gridColumnAlignment(.trailing)
                     }
                 }.padding([.leading, .trailing], 15)
+            }
+
+            if stationTrains.count == 1 {
+                // expand grid width
+                Divider().opacity(0)
             }
         }.padding([.top, .bottom], 15)
     }
