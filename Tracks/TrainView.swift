@@ -84,9 +84,16 @@ struct TrainView: View {
                     Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
-        }.navigationTitle(
+        }
+        .navigationTitle(
             "Train \(self.train.id)\(!self.train.live ? "*" : "")"
         )
+        .onAppear {
+            if stopStations.count == 0 {
+                // show past if no future stops
+                showPast = true
+            }
+        }
     }
 
     // get stops with stations
