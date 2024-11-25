@@ -4,7 +4,7 @@ struct Stations {
 
     // load json info
     func loadStations(trains: [Train]) -> [BothStations] {
-        stations.map { station in
+        self.stations.map { station in
             BothStations(
                 name: station.name,
 

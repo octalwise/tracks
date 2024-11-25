@@ -24,8 +24,8 @@ struct TrainView: View {
 
                 Spacer()
 
-                Text(train.route)
-                    .foregroundStyle(train.routeColor())
+                Text(self.train.route)
+                    .foregroundStyle(self.train.routeColor())
                     .padding(.leading, 15)
                     .lineLimit(1)
             }.padding(15)
@@ -83,7 +83,7 @@ struct TrainView: View {
                 }
             }.padding(.bottom, 15)
         }.navigationTitle(
-            "Train \(train.id)\(!train.live ? "*" : "")"
+            "Train \(self.train.id)\(!self.train.live ? "*" : "")"
         )
     }
 
@@ -92,18 +92,27 @@ struct TrainView: View {
         self.train
             .stops
             .filter {
-                train.location == nil || $0.station != train.location
+                // hide current stop
+                self.train.location == nil || $0.station != self.train.location
             }
             .sorted {
+                // sort by expected stop time
                 $0.expected < $1.expected
             }
             .map { stop in
                 (
+                    // train stop
                     stop,
+
+                    // stop station
                     stations.first {
                         $0.north.id == stop.station || $0.south.id == stop.station
                     }!,
+
+                    // delay time
                     stop.scheduled.distance(to: stop.expected) / 60,
+
+                    // check if delayed
                     stop.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }

@@ -58,7 +58,7 @@ struct StationView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "tram.fill")
-                                   .foregroundStyle(data.0.routeColor())
+                                    .foregroundStyle(data.0.routeColor())
 
                                 Text("Train \(data.0.id)")
                             }
@@ -87,21 +87,35 @@ struct StationView: View {
     // get trains with stop
     func stopTrains() -> [(Train, Stop, Bool)] {
         self.trains
-            .map {
-                ($0, $0.stops.first {
-                    $0.station == station.north.id || $0.station == station.south.id
-                })
+            .map { train in
+                (
+                    // train
+                    train,
+
+                    // train stop in station
+                    train.stops.first {
+                        $0.station == self.station.north.id
+                            || $0.station == self.station.south.id
+                    }
+                )
             }
             .filter {
+                // filter trains going in direction and stopping at station
                 $0.0.direction == direction && $0.1 != nil
             }
             .sorted {
+                // sort by expected stop time
                 $0.1!.expected < $1.1!.expected
             }
             .map {
                 (
+                    // train
                     $0.0,
+
+                    // station stop
                     $0.1!,
+
+                    // check if delayed
                     $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }

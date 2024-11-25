@@ -39,7 +39,7 @@ struct AlertItem: View {
                 }
             }) {
                 // header
-                Text(alert.header)
+                Text(self.alert.header)
                     .lineLimit(expanded ? nil : 1)
                     .multilineTextAlignment(.leading)
 
@@ -55,10 +55,10 @@ struct AlertItem: View {
                 }
             }
 
-            if alert.description != nil && !alert.description!.isEmpty && expanded {
+            if self.alert.description != nil && !self.alert.description!.isEmpty && expanded {
                 // description
                 HStack {
-                    Text(alert.description!)
+                    Text(self.alert.description!)
                         .multilineTextAlignment(.leading)
 
                     Spacer()

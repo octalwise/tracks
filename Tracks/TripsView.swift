@@ -22,13 +22,13 @@ struct TripsView: View {
         HStack {
             // from station
             Menu {
-                Picker("From", selection: $from) {
+                Picker("From", selection: self.$from) {
                     ForEach(self.stations, id: \.self) { station in
                         Text(station.name)
                     }
                 }
             } label: {
-                Text(from.name)
+                Text(self.from.name)
                     .lineLimit(1)
                     .padding(.trailing, -3)
 
@@ -46,13 +46,13 @@ struct TripsView: View {
 
             // to station
             Menu {
-                Picker("To", selection: $to) {
+                Picker("To", selection: self.$to) {
                     ForEach(self.stations, id: \.self) { station in
                         Text(station.name)
                     }
                 }
             } label: {
-                Text(to.name)
+                Text(self.to.name)
                     .lineLimit(1)
                     .padding(.trailing, -3)
 
@@ -121,30 +121,44 @@ struct TripsView: View {
     // get trains with stops
     func trainsStops() -> [(Train, Stop, Stop, Bool)] {
         self.trains
-            .map {
+            .map { train in
                 (
-                    $0,
-                    $0.stops.first {
-                        $0.station == from.north.id || $0.station == from.south.id
+                    // train
+                    train,
+
+                    // stop at from station
+                    train.stops.first {
+                        $0.station == self.from.north.id || $0.station == self.from.south.id
                     },
-                    $0.stops.first {
-                        $0.station == to.north.id || $0.station == to.south.id
+
+                    // stop at to station
+                    train.stops.first {
+                        $0.station == self.to.north.id || $0.station == self.to.south.id
                     }
                 )
             }
             .filter {
+                // filter trains with stops and from stop is before to stop
                 $0.1 != nil && $0.2 != nil &&
                     $0.0.stops.firstIndex(of: $0.1!)! < $0.0.stops.firstIndex(of: $0.2!)!
             }
             .map {
                 (
+                    // train
                     $0.0,
+
+                    // from stop
                     $0.1!,
+
+                    // to stop
                     $0.2!,
+
+                    // check if delayed
                     $0.1!.expected > Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
             .sorted {
+                // sort by expected stop time
                 $0.1.expected < $1.1.expected
             }
     }
