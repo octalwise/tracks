@@ -10,13 +10,11 @@ struct Stations {
 
                 north: Station(
                     id:    station.north,
-                    name:  "\(station.name) Northbound",
                     train: trains.first { $0.location == station.north }?.id
                 ),
 
                 south: Station(
                     id:    station.south,
-                    name:  "\(station.name) Southbound",
                     train: trains.first { $0.location == station.south }?.id
                 )
             )
@@ -52,9 +50,6 @@ struct BothStations: Codable, Hashable {
 struct Station: Codable, Hashable {
     // station id
     let id: Int
-
-    // name
-    let name:  String
 
     // current train
     let train: Int?
