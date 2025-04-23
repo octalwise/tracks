@@ -44,6 +44,11 @@ struct BothStations: Codable, Hashable {
 
     // southbound
     let south: Station
+
+    // check if contains id
+    func contains(id: Int) -> Bool {
+        id == self.north.id || id == self.south.id
+    }
 }
 
 // single side

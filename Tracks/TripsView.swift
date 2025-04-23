@@ -129,14 +129,10 @@ struct TripsView: View {
                     train: train,
 
                     // stop at from station
-                    from: train.stops.first {
-                        $0.station == self.from.north.id || $0.station == self.from.south.id
-                    },
+                    from: train.stops.first { self.from.contains(id: $0.station) },
 
                     // stop at to station
-                    to: train.stops.first {
-                        $0.station == self.to.north.id || $0.station == self.to.south.id
-                    }
+                    to: train.stops.first { self.to.contains(id: $0.station) }
                 )
             }
             .filter { (train: Train, from: Stop?, to: Stop?) in

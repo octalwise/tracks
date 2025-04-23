@@ -114,9 +114,7 @@ struct TrainView: View {
                     stop: stop,
 
                     // stop station
-                    station: stations.first {
-                        $0.north.id == stop.station || $0.south.id == stop.station
-                    }!,
+                    station: stations.first { $0.contains(id: stop.station) }!,
 
                     // delay time
                     delay: stop.scheduled.distance(to: stop.expected) / 60,

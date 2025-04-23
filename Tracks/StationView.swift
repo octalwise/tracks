@@ -96,7 +96,7 @@ struct StationView: View {
 
                     // train stop in station
                     stop: train.stops.first {
-                        $0.station == self.station.north.id || $0.station == self.station.south.id
+                        self.station.contains(id: $0.station)
                     }
                 )
             }
