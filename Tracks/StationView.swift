@@ -10,7 +10,7 @@ struct StationView: View {
     let stations: [BothStations]
 
     // trains direction
-    @State var direction: String = "N"
+    @State var direction = "N"
 
     // show past trains
     @State var showPast = false

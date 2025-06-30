@@ -81,8 +81,8 @@ struct StationsView: View {
             .map { station in
                 (
                     station: station,
-                    south:   trains.first { $0.id == station.south.train },
-                    north:   trains.first { $0.id == station.north.train }
+                    south: trains.first { $0.id == station.south.train },
+                    north: trains.first { $0.id == station.north.train }
                 )
             }
     }

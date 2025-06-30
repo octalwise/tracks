@@ -20,7 +20,6 @@ enum ScheduledError: Error {
     case formatError(String)
 }
 
-
 // scheduled trains fetcher
 struct Scheduled {
     var trains: [ScheduledTrain]

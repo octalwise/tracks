@@ -9,12 +9,12 @@ struct Stations {
                 name: station.name,
 
                 north: Station(
-                    id:    station.north,
+                    id: station.north,
                     train: trains.first { $0.location == station.north }?.id
                 ),
 
                 south: Station(
-                    id:    station.south,
+                    id: station.south,
                     train: trains.first { $0.location == station.south }?.id
                 )
             )
