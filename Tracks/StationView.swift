@@ -27,7 +27,7 @@ struct StationView: View {
             }
             .pickerStyle(.segmented)
             .padding(.top, 15)
-            .padding([.leading, .trailing], 15)
+            .padding([.leading, .trailing], 20)
 
             HStack {
                 // toggle past trains
@@ -36,7 +36,10 @@ struct StationView: View {
                 }.toggleStyle(CheckboxStyle())
 
                 Spacer()
-            }.padding(15)
+            }
+            .padding(.top, 10)
+            .padding(.bottom, 15)
+            .padding([.leading, .trailing], 20)
 
             Grid {
                 ForEach(
@@ -46,7 +49,7 @@ struct StationView: View {
                     let (train, stop, past) = data
 
                     if index > 0 {
-                        Divider()
+                        Divider().padding(.bottom, 4)
                     }
 
                     GridRow {
@@ -62,7 +65,7 @@ struct StationView: View {
                                 Image(systemName: "tram.fill")
                                     .foregroundStyle(train.routeColor())
 
-                                Text("Train \(train.id)")
+                                Text(String(train.id))
                             }
                         }.gridColumnAlignment(.leading)
 
@@ -74,7 +77,7 @@ struct StationView: View {
                         .monospacedDigit()
                         .gridColumnAlignment(.trailing)
                     }
-                    .padding([.leading, .trailing], 15)
+                    .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
                 }
 
@@ -117,7 +120,7 @@ struct StationView: View {
                     stop: stop!,
 
                     // check if past stop
-                    stop!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: stop!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
     }

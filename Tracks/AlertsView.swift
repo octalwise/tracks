@@ -16,10 +16,11 @@ struct AlertsView: View {
                 }
 
                 AlertItem(alert: alert)
+                    .padding([.leading, .trailing], 20)
             }
         }
         .padding(.top, 10)
-        .padding([.bottom, .leading, .trailing], 15)
+        .padding(.bottom, 15)
     }
 }
 
@@ -49,7 +50,7 @@ struct AlertItem: View {
                     Image(systemName:  "chevron.right")
                         .rotationEffect(.degrees(expanded ? 90 : 0))
                         .animation(.linear(duration: 0.25), value: expanded)
-                        .offset(y: 2)
+                        .offset(y: 4)
 
                     Spacer()
                 }

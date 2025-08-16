@@ -17,7 +17,7 @@ struct StationsView: View {
                 let (station, south, north) = data
 
                 if index > 0 {
-                    Divider()
+                    Divider().padding(.bottom, 4)
                 }
 
                 GridRow {
@@ -65,7 +65,7 @@ struct StationsView: View {
                         Image(systemName: "chevron.up")
                             .gridColumnAlignment(.trailing)
                     }
-                }.padding([.leading, .trailing], 15)
+                }.padding([.leading, .trailing], 20)
             }
 
             if stationTrains.count == 1 {

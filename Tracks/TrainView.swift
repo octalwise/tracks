@@ -28,7 +28,10 @@ struct TrainView: View {
                     .foregroundStyle(self.train.routeColor())
                     .padding(.leading, 15)
                     .lineLimit(1)
-            }.padding(15)
+            }
+            .padding(.top, 10)
+            .padding(.bottom, 15)
+            .padding([.leading, .trailing], 20)
 
             Grid {
                 ForEach(
@@ -38,7 +41,7 @@ struct TrainView: View {
                     let (stop, station, delay, past) = data
 
                     if index > 0 {
-                        Divider()
+                        Divider().padding(.bottom, 4)
                     }
 
                     GridRow {
@@ -75,7 +78,7 @@ struct TrainView: View {
                             ).monospacedDigit()
                         }.gridColumnAlignment(.trailing)
                     }
-                    .padding([.leading, .trailing], 15)
+                    .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
                 }
 
@@ -100,10 +103,6 @@ struct TrainView: View {
     func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {
         self.train
             .stops
-            .filter {
-                // hide current stop
-                self.train.location == nil || $0.station != self.train.location
-            }
             .sorted {
                 // sort by expected stop time
                 $0.expected < $1.expected
