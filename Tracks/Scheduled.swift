@@ -11,7 +11,7 @@ struct ScheduledTrain {
 // scheduled stop
 struct ScheduledStop {
     let station: Int
-    var time:    Date
+    let time:    Date
     let train:   Int
 }
 
@@ -27,7 +27,9 @@ struct Scheduled {
 
     // fetch scheduled
     init(html: String) {
-        let isWeekend = Calendar.current.isDateInWeekend(Date())
+        let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
+
+        let isWeekend = Calendar.current.isDateInWeekend(shifted)
         let dayType   = isWeekend ? "weekend" : "weekday"
 
         self.trains = []
