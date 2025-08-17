@@ -140,20 +140,18 @@ struct Scheduled {
             }
 
         return self.trains.map { train in
-            let trainStops = stops.filter { $0.train == train.id }
+            let trainStops =
+                stops
+                    .filter { $0.train == train.id }
+                    .sorted { $0.time < $1.time }
 
             let times = trainStops.map { $0.time }
-            var location: Int? = nil
 
             // find location
-            if times.min()! <= now && times.max()! >= now {
-                let stop =
-                    trainStops
-                        .sorted { $0.time > $1.time }
-                        .first  { $0.time <= now }
-
-                location = stop!.station
-            }
+            let location =
+                times.min()! <= now && times.max()! >= now
+                    ? trainStops.last { $0.time <= now }!.station
+                    : nil;
 
             // create train
             return Train(
