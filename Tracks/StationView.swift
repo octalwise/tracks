@@ -46,7 +46,7 @@ struct StationView: View {
                     Array(stopTrains.enumerated()),
                     id: \.1.train.self
                 ) { index, data in
-                    let (train, stop, past) = data
+                    let (train, stop, delay, past) = data
 
                     if index > 0 {
                         Divider().padding(.bottom, 4)
@@ -69,13 +69,23 @@ struct StationView: View {
                             }
                         }.gridColumnAlignment(.leading)
 
-                        // arrival time
-                        Text(
-                            stop.expected
-                                .formatted(date: .omitted, time: .shortened)
-                        )
-                        .monospacedDigit()
-                        .gridColumnAlignment(.trailing)
+                        HStack {
+                            if delay >= 1 {
+                                // delay duration
+                                Text(String(
+                                    format: "+%.0f",
+                                    stop.scheduled.distance(to: stop.expected) / 60
+                                ))
+                                .foregroundStyle(.red)
+                                .padding(.trailing, 10)
+                            }
+
+                            // arrival time
+                            Text(
+                                stop.expected
+                                    .formatted(date: .omitted, time: .shortened)
+                            ).monospacedDigit()
+                        }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
@@ -90,7 +100,7 @@ struct StationView: View {
     }
 
     // get trains with stop
-    func stopTrains() -> [(train: Train, stop: Stop, past: Bool)] {
+    func stopTrains() -> [(train: Train, stop: Stop, delay: Double, past: Bool)] {
         self.trains
             .map { train in
                 (
@@ -112,15 +122,20 @@ struct StationView: View {
                 $0.stop!.expected < $1.stop!.expected
             }
             .map { (train, stop) in
-                (
+                let stop = stop!
+
+                return (
                     // train
                     train: train,
 
                     // station stop
-                    stop: stop!,
+                    stop: stop,
+
+                    // delay time
+                    delay: stop.scheduled.distance(to: stop.expected) / 60,
 
                     // check if past stop
-                    past: stop!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: stop.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
                 )
             }
     }
