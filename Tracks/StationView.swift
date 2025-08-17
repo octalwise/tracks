@@ -96,7 +96,14 @@ struct StationView: View {
                     Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
-        }.navigationTitle(self.station.name)
+        }
+        .navigationTitle(self.station.name)
+        .onAppear {
+            if stopTrains.count == 0 {
+                // show past if no future stops
+                self.showPast = true
+            }
+        }
     }
 
     // get trains with stop

@@ -147,6 +147,11 @@ struct TripsView: View {
                     Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
+        }.onAppear {
+            if trainsStops.count == 0 {
+                // show past if no future stops
+                self.showPast = true
+            }
         }
     }
 
