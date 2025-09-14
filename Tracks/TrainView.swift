@@ -72,10 +72,8 @@ struct TrainView: View {
                             }
 
                             // arrival time
-                            Text(
-                                stop.expected
-                                    .formatted(date: .omitted, time: .shortened)
-                            ).monospacedDigit()
+                            Text(stop.expected.formatTime())
+                                .monospacedDigit()
                         }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)

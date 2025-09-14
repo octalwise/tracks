@@ -62,3 +62,23 @@ struct Alert: Codable, Hashable {
     // optional description
     let description: String?
 }
+
+extension Date {
+    // time format handling leading zeroes
+    func formatTime() -> String {
+        let is24h = DateFormatter.dateFormat(
+            fromTemplate: "j",
+            options: 0,
+            locale: .current
+        )?.contains("H") ?? false
+
+        let base = Date.FormatStyle().minute(.twoDigits)
+
+        let format =
+            is24h
+                ? base.hour(.twoDigits(amPM: .omitted))
+                : base.hour(.defaultDigits(amPM: .abbreviated))
+
+        return self.formatted(format)
+    }
+}

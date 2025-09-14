@@ -7,6 +7,8 @@ struct ContentView: View {
     @State var alerts:   [Alert]? = nil
     @State var stations: [BothStations]? = nil
 
+    @State var lastUpdate: Date? = nil
+
     // scheduled trains fetcher
     let scheduled: Scheduled? = nil
 
@@ -18,9 +20,9 @@ struct ContentView: View {
     let alertsTimer =
         Timer.publish(every: 180, on: .main, in: .common).autoconnect()
 
-    // every 24 hours
+    // every 5am
     let scheduledTimer =
-        Timer.publish(every: 86_400, on: .main, in: .common).autoconnect()
+        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
         TabView {
@@ -98,9 +100,18 @@ struct ContentView: View {
             // every 180 seconds
             self.fetchAlerts()
         }
-        .onReceive(self.scheduledTimer) { _ in
-            // every 24 hours
-            self.createScheduled()
+        .onReceive(self.scheduledTimer) { now in
+            if let last = self.lastUpdate, Calendar.current.isDate(now, inSameDayAs: last) {
+                return
+            }
+
+            let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
+
+            // every 5am
+            if comps.hour == 5 && comps.minute == 1 {
+                self.createScheduled()
+                self.lastUpdate = now
+            }
         }
     }
 

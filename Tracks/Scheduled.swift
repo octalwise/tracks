@@ -77,7 +77,7 @@ struct Scheduled {
 
                         let formatter = DateFormatter()
 
-                        formatter.dateFormat = "hh:mma"
+                        formatter.dateFormat = "h:mma"
                         formatter.timeZone   = TimeZone(abbreviation: "PST")
 
                         // guard invalid times
@@ -151,7 +151,7 @@ struct Scheduled {
             let location =
                 times.min()! <= now && times.max()! >= now
                     ? trainStops.last { $0.time <= now }!.station
-                    : nil;
+                    : nil
 
             // create train
             return Train(

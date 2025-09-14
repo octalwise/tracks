@@ -129,12 +129,12 @@ struct TripsView: View {
                         }.gridColumnAlignment(.leading)
 
                         // start time
-                        Text(from.expected.formatted(date: .omitted, time: .shortened))
+                        Text(from.expected.formatTime())
                             .monospacedDigit()
                             .gridColumnAlignment(.trailing)
 
                         // end time
-                        Text(to.expected.formatted(date: .omitted, time: .shortened))
+                        Text(to.expected.formatTime())
                             .monospacedDigit()
                             .gridColumnAlignment(.trailing)
                     }
