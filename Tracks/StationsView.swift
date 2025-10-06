@@ -3,7 +3,7 @@ import SwiftUI
 
 // all stations view
 struct StationsView: View {
-    let trains:   [Train]
+    let trains: [Train]
     let stations: [BothStations]
 
     var body: some View {
@@ -25,8 +25,8 @@ struct StationsView: View {
                         // southbound train
                         NavigationLink {
                             TrainView(
-                                train:    south!,
-                                trains:   self.trains,
+                                train: south!,
+                                trains: self.trains,
                                 stations: self.stations
                             )
                         } label: {
@@ -41,8 +41,8 @@ struct StationsView: View {
                     // station text
                     NavigationLink {
                         StationView(
-                            station:  station,
-                            trains:   self.trains,
+                            station: station,
+                            trains: self.trains,
                             stations: self.stations
                         )
                     } label: {
@@ -53,8 +53,8 @@ struct StationsView: View {
                         // northbound train
                         NavigationLink {
                             TrainView(
-                                train:    north!,
-                                trains:   self.trains,
+                                train: north!,
+                                trains: self.trains,
                                 stations: self.stations
                             )
                         } label: {

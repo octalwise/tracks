@@ -3,16 +3,16 @@ import SwiftSoup
 
 // scheduled train
 struct ScheduledTrain {
-    let id:        Int
+    let id: Int
     let direction: String
-    let route:     String
+    let route: String
 }
 
 // scheduled stop
 struct ScheduledStop {
     let station: Int
-    let time:    Date
-    let train:   Int
+    let time: Date
+    let train: Int
 }
 
 // error handling
@@ -23,17 +23,17 @@ enum ScheduledError: Error {
 // scheduled trains fetcher
 struct Scheduled {
     var trains: [ScheduledTrain]
-    var stops:  [ScheduledStop]
+    var stops: [ScheduledStop]
 
     // fetch scheduled
     init(html: String) {
         let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
 
         let isWeekend = Calendar.current.isDateInWeekend(shifted)
-        let dayType   = isWeekend ? "weekend" : "weekday"
+        let dayType = isWeekend ? "weekend" : "weekday"
 
         self.trains = []
-        self.stops  = []
+        self.stops = []
 
         do {
             // parse html
@@ -52,7 +52,7 @@ struct Scheduled {
 
                     // remove local suffix
                     let isLocal = fullRoute == "Local Weekday" || fullRoute == "Local Weekend"
-                    let route   = isLocal ? "Local" : fullRoute
+                    let route = isLocal ? "Local" : fullRoute
 
                     // add scheduled train
                     self.trains.append(
@@ -89,8 +89,8 @@ struct Scheduled {
                         self.stops.append(
                             ScheduledStop(
                                 station: stop,
-                                time:    time,
-                                train:   train
+                                time: time,
+                                train: train
                             )
                         )
                     }
@@ -116,9 +116,9 @@ struct Scheduled {
                 let nowComponents =
                     calendar.dateComponents([.year, .month, .day, .hour], from: now)
 
-                components.year  = nowComponents.year
+                components.year = nowComponents.year
                 components.month = nowComponents.month
-                components.day   = nowComponents.day
+                components.day = nowComponents.day
 
                 var time = calendar.date(from: components)!
 
@@ -134,8 +134,8 @@ struct Scheduled {
 
                 return ScheduledStop(
                     station: stop.station,
-                    time:    time,
-                    train:   stop.train
+                    time: time,
+                    train: stop.train
                 )
             }
 
@@ -155,18 +155,18 @@ struct Scheduled {
 
             // create train
             return Train(
-                id:   train.id,
+                id: train.id,
                 live: false,
 
                 direction: train.direction,
-                route:     train.route,
-                location:  location,
+                route: train.route,
+                location: location,
 
                 stops: trainStops.map {
                     Stop(
-                        station:   $0.station,
+                        station: $0.station,
                         scheduled: $0.time,
-                        expected:  $0.time
+                        expected: $0.time
                     )
                 }
             )

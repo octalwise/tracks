@@ -6,7 +6,7 @@ struct StationView: View {
     // station
     let station: BothStations
 
-    let trains:   [Train]
+    let trains: [Train]
     let stations: [BothStations]
 
     // trains direction
@@ -56,8 +56,8 @@ struct StationView: View {
                         // train
                         NavigationLink {
                             TrainView(
-                                train:    train,
-                                trains:   self.trains,
+                                train: train,
+                                trains: self.trains,
                                 stations: self.stations
                             )
                         } label: {

@@ -4,7 +4,7 @@ import SwiftUI
 // trips view
 struct TripsView: View {
     let stations: [BothStations]
-    let trains:   [Train]
+    let trains: [Train]
 
     // from station
     @State var from: BothStations
@@ -115,8 +115,8 @@ struct TripsView: View {
                         // trip train
                         NavigationLink {
                             TrainView(
-                                train:    train,
-                                trains:   self.trains,
+                                train: train,
+                                trains: self.trains,
                                 stations: self.stations
                             )
                         } label: {

@@ -6,7 +6,7 @@ struct TrainView: View {
     // train
     let train: Train
 
-    let trains:   [Train]
+    let trains: [Train]
     let stations: [BothStations]
 
     @State var showPast = false
@@ -49,8 +49,8 @@ struct TrainView: View {
                             // stop station
                             NavigationLink {
                                 StationView(
-                                    station:  station,
-                                    trains:   self.trains,
+                                    station: station,
+                                    trains: self.trains,
                                     stations: self.stations
                                 )
                             } label: {

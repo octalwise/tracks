@@ -3,8 +3,8 @@ import SwiftUI
 
 // main view
 struct ContentView: View {
-    @State var trains:   [Train]? = nil
-    @State var alerts:   [Alert]? = nil
+    @State var trains: [Train]? = nil
+    @State var alerts: [Alert]? = nil
     @State var stations: [BothStations]? = nil
 
     @State var lastUpdate: Date? = nil
@@ -48,7 +48,7 @@ struct ContentView: View {
                     if self.stations != nil && self.trains != nil {
                         TripsView(
                             stations: self.stations!,
-                            trains:   self.trains!,
+                            trains: self.trains!,
 
                             from: self.stations!.first {
                                 $0.name == "Palo Alto"
