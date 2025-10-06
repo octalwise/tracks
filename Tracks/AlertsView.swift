@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-// alerts view
 struct AlertsView: View {
     let alerts: [Alert]
 
@@ -24,9 +23,7 @@ struct AlertsView: View {
     }
 }
 
-// alert item
 struct AlertItem: View {
-    // alert
     let alert: Alert
 
     @State var expanded = false

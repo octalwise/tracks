@@ -1,6 +1,5 @@
 import SwiftUI
 
-// checkbox toggle style
 struct CheckboxStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button {

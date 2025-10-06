@@ -1,18 +1,13 @@
 import Foundation
 import SwiftUI
 
-// individual station view
 struct StationView: View {
-    // station
     let station: BothStations
 
     let trains: [Train]
     let stations: [BothStations]
 
-    // trains direction
     @State var direction = "N"
-
-    // show past trains
     @State var showPast = false
 
     var body: some View {
@@ -104,7 +99,6 @@ struct StationView: View {
         }
     }
 
-    // get trains with stop
     func stopTrains() -> [(train: Train, stop: Stop, delay: Double, past: Bool)] {
         self.trains
             .map { train in
@@ -119,11 +113,9 @@ struct StationView: View {
                 )
             }
             .filter { (train, stop) in
-                // filter trains going in direction and stopping at station
                 train.direction == direction && stop != nil
             }
             .sorted {
-                // sort by expected stop time
                 $0.stop!.expected < $1.stop!.expected
             }
             .map { (train, stop) in

@@ -1,31 +1,26 @@
 import Foundation
 import SwiftSoup
 
-// scheduled train
 struct ScheduledTrain {
     let id: Int
     let direction: String
     let route: String
 }
 
-// scheduled stop
 struct ScheduledStop {
     let station: Int
     let time: Date
     let train: Int
 }
 
-// error handling
 enum ScheduledError: Error {
     case formatError(String)
 }
 
-// scheduled trains fetcher
 struct Scheduled {
     var trains: [ScheduledTrain]
     var stops: [ScheduledStop]
 
-    // fetch scheduled
     init(html: String) {
         let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
 
@@ -36,25 +31,21 @@ struct Scheduled {
         self.stops = []
 
         do {
-            // parse html
             let doc = try SwiftSoup.parse(html)
 
             for table in try doc.select("table.caltrain_schedule tbody") {
                 let direction =
                     try table.parent()!.attr("data-direction") == "northbound" ? "N" : "S"
 
-                // scheduled trains
                 for header in try table.select(
                     "tr:first-child td.schedule-trip-header[data-service-type=\(dayType)]"
                 ) {
                     let train = Int(try header.attr("data-trip-id"))!
                     let fullRoute = try header.attr("data-route-id")
 
-                    // remove local suffix
                     let isLocal = fullRoute == "Local Weekday" || fullRoute == "Local Weekend"
                     let route = isLocal ? "Local" : fullRoute
 
-                    // add scheduled train
                     self.trains.append(
                         ScheduledTrain(
                             id: train,
@@ -64,7 +55,6 @@ struct Scheduled {
                     )
                 }
 
-                // scheduled stops
                 for row in try table.select("tr[data-stop-id]") {
                     let stop = Int(try row.attr("data-stop-id"))!
 
@@ -80,12 +70,10 @@ struct Scheduled {
                         formatter.dateFormat = "h:mma"
                         formatter.timeZone   = TimeZone(abbreviation: "PST")
 
-                        // guard invalid times
                         guard let time = formatter.date(from: try timepoint.text()) else {
                             throw ScheduledError.formatError("Invalid time format in Caltrain data.")
                         }
 
-                        // add scheduled stop
                         self.stops.append(
                             ScheduledStop(
                                 station: stop,
@@ -102,7 +90,6 @@ struct Scheduled {
         }
     }
 
-    // fetch trains
     func fetchScheduled() -> [Train] {
         let now = Date()
 
@@ -122,12 +109,10 @@ struct Scheduled {
 
                 var time = calendar.date(from: components)!
 
-                // previous day
                 if nowComponents.hour! >= 4 && components.hour! < 4 {
                     time = calendar.date(byAdding: .day, value: 1, to: time)!
                 }
 
-                // next day
                 if nowComponents.hour! <= 4 && components.hour! >= 4 {
                     time = calendar.date(byAdding: .day, value: -1, to: time)!
                 }
@@ -147,13 +132,11 @@ struct Scheduled {
 
             let times = trainStops.map { $0.time }
 
-            // find location
             let location =
                 times.min()! <= now && times.max()! >= now
                     ? trainStops.last { $0.time <= now }!.station
                     : nil
 
-            // create train
             return Train(
                 id: train.id,
                 live: false,

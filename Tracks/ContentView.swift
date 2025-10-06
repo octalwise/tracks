@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-// main view
 struct ContentView: View {
     @State var trains: [Train]? = nil
     @State var alerts: [Alert]? = nil
@@ -9,8 +8,8 @@ struct ContentView: View {
 
     @State var lastUpdate: Date? = nil
 
-    // scheduled trains fetcher
     let scheduled: Scheduled? = nil
+    let holidays: Holidays? = nil
 
     // every 90 seconds
     let trainsTimer =
@@ -115,7 +114,6 @@ struct ContentView: View {
         }
     }
 
-    // fetch trains
     func fetchTrains() {
         if self.scheduled == nil {
             createScheduled()
@@ -125,11 +123,9 @@ struct ContentView: View {
         }
     }
 
-    // create scheduled
     func createScheduled() {
         let url = URL(string: "https://www.caltrain.com")!
 
-        // fetch caltrain site
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data {
                 let scheduled = Scheduled(html: String(data: data, encoding: .utf8)!)
@@ -140,18 +136,15 @@ struct ContentView: View {
         }.resume()
     }
 
-    // fetch live trains
     func fetchLive() {
         let url = URL(string: "https://tracks-api.octalwise.com/trains")!
 
-        // add auth header
         var request = URLRequest(url: url)
         request.setValue("AUTH", forHTTPHeaderField: "Authorization")
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        // fetch data from server
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {
@@ -168,7 +161,6 @@ struct ContentView: View {
         }.resume()
     }
 
-    // fetch stations
     func fetchStations() {
         if let url = Bundle.main.url(forResource: "stations", withExtension: "json") {
             do {
@@ -183,18 +175,15 @@ struct ContentView: View {
         }
     }
 
-    // fetch alerts
     func fetchAlerts() {
         let url = URL(string: "https://tracks-api.octalwise.com/alerts")!
 
-        // add auth header
         var request = URLRequest(url: url)
         request.setValue("AUTH", forHTTPHeaderField: "Authorization")
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        // fetch data from server
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 do {

@@ -1,9 +1,7 @@
 import Foundation
 import SwiftUI
 
-// individual train view
 struct TrainView: View {
-    // train
     let train: Train
 
     let trains: [Train]
@@ -97,12 +95,10 @@ struct TrainView: View {
         }
     }
 
-    // get stops with stations
     func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {
         self.train
             .stops
             .sorted {
-                // sort by expected stop time
                 $0.expected < $1.expected
             }
             .map { stop in

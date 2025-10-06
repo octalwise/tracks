@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-// all stations view
 struct StationsView: View {
     let trains: [Train]
     let stations: [BothStations]
@@ -75,7 +74,6 @@ struct StationsView: View {
         }.padding([.top, .bottom], 15)
     }
 
-    // get trains for station
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {
         self.stations
             .map { station in
