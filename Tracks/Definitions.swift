@@ -61,3 +61,7 @@ extension Date {
         return self.formatted(format)
     }
 }
+
+enum FormatError: Error {
+    case formatError(String)
+}

@@ -13,19 +13,17 @@ struct ScheduledStop {
     let train: Int
 }
 
-enum ScheduledError: Error {
-    case formatError(String)
-}
-
 struct Scheduled {
     var trains: [ScheduledTrain]
     var stops: [ScheduledStop]
 
-    init(html: String) {
+    init(html: String, holidays: Holidays) {
         let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
 
         let isWeekend = Calendar.current.isDateInWeekend(shifted)
-        let dayType = isWeekend ? "weekend" : "weekday"
+
+        let dayType =
+            (holidays.isHoliday(shifted) || isWeekend) ? "weekend" : "weekday"
 
         self.trains = []
         self.stops = []
@@ -68,10 +66,10 @@ struct Scheduled {
                         let formatter = DateFormatter()
 
                         formatter.dateFormat = "h:mma"
-                        formatter.timeZone   = TimeZone(abbreviation: "PST")
+                        formatter.timeZone = TimeZone(abbreviation: "PST")
 
                         guard let time = formatter.date(from: try timepoint.text()) else {
-                            throw ScheduledError.formatError("Invalid time format in Caltrain data.")
+                            throw FormatError.formatError("Invalid time format in Caltrain data.")
                         }
 
                         self.stops.append(

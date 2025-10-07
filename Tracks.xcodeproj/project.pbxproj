@@ -21,6 +21,7 @@
 		0FA55ADE2B422BBA004332E6 /* Scheduled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA55ADD2B422BBA004332E6 /* Scheduled.swift */; };
 		0FF17CC52B4BBE890082BD2F /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF17CC42B4BBE890082BD2F /* Station.swift */; };
 		0FF17CC72B4BC12C0082BD2F /* stations.json in Resources */ = {isa = PBXBuildFile; fileRef = 0FF17CC62B4BC12C0082BD2F /* stations.json */; };
+		2A0EBCA32E94E34600BDDB9E /* Holidays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0EBCA22E94E34600BDDB9E /* Holidays.swift */; };
 		6E568EBB5C625A9964CAC888 /* Pods_Tracks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C6162720045E884964FE9D /* Pods_Tracks.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		0FA55ADD2B422BBA004332E6 /* Scheduled.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scheduled.swift; sourceTree = "<group>"; };
 		0FF17CC42B4BBE890082BD2F /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		0FF17CC62B4BC12C0082BD2F /* stations.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stations.json; sourceTree = "<group>"; };
+		2A0EBCA22E94E34600BDDB9E /* Holidays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holidays.swift; sourceTree = "<group>"; };
 		6D831923CCE7F864EBBB98CF /* Pods-Tracks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracks.debug.xcconfig"; path = "Target Support Files/Pods-Tracks/Pods-Tracks.debug.xcconfig"; sourceTree = "<group>"; };
 		96C6162720045E884964FE9D /* Pods_Tracks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tracks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5120FD220824EA2E1D85F24 /* Pods-Tracks.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracks.release.xcconfig"; path = "Target Support Files/Pods-Tracks/Pods-Tracks.release.xcconfig"; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				0F5CE0112B7D6FB7008E5DAA /* AlertsView.swift */,
 				0F3550E82BA64C5D00A5BD19 /* CheckboxStyle.swift */,
 				0FA55AD32B422A8E004332E6 /* Definitions.swift */,
+				2A0EBCA22E94E34600BDDB9E /* Holidays.swift */,
 				0FA55ADD2B422BBA004332E6 /* Scheduled.swift */,
 				0FF17CC42B4BBE890082BD2F /* Station.swift */,
 				0FA55AD72B422A8E004332E6 /* StationView.swift */,
@@ -198,9 +201,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Tracks/Pods-Tracks-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Tracks/Pods-Tracks-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -246,6 +253,7 @@
 				0FA55AD92B422A8E004332E6 /* StationsView.swift in Sources */,
 				0FA55AD82B422A8E004332E6 /* Definitions.swift in Sources */,
 				0F3550E92BA64C5D00A5BD19 /* CheckboxStyle.swift in Sources */,
+				2A0EBCA32E94E34600BDDB9E /* Holidays.swift in Sources */,
 				0F6BBD7F2B1AA96E00CE5D1C /* TracksApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

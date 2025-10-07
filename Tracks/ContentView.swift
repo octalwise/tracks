@@ -84,6 +84,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            self.fetchStations()
             self.fetchTrains()
             self.fetchAlerts()
         }
@@ -108,14 +109,21 @@ struct ContentView: View {
 
             // every 5am
             if comps.hour == 5 && comps.minute == 1 {
-                self.createScheduled()
+                if self.holidays == nil {
+                    self.createHolidays()
+                } else {
+                    self.createScheduled()
+                }
+
                 self.lastUpdate = now
             }
         }
     }
 
     func fetchTrains() {
-        if self.scheduled == nil {
+        if self.holidays == nil {
+            createHolidays()
+        } else if self.scheduled == nil {
             createScheduled()
         } else {
             self.trains = self.scheduled!.fetchScheduled()
@@ -123,12 +131,27 @@ struct ContentView: View {
         }
     }
 
+    func createHolidays() {
+        let url = URL(string: "https://www.caltrain.com/schedules/holiday-service-schedules")!
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data {
+                let holidays = Holidays(html: String(data: data, encoding: .utf8)!)
+
+                createScheduled()
+            }
+        }.resume()
+    }
+
     func createScheduled() {
         let url = URL(string: "https://www.caltrain.com")!
 
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data {
-                let scheduled = Scheduled(html: String(data: data, encoding: .utf8)!)
+                let scheduled = Scheduled(
+                    html: String(data: data, encoding: .utf8)!,
+                    holidays: holidays!
+                )
 
                 self.trains = scheduled.fetchScheduled()
                 self.fetchLive()
@@ -170,7 +193,7 @@ struct ContentView: View {
                 let data = try decoder.decode([StationInfo].self, from: json)
                 let stations = Stations(stations: data)
 
-                self.stations = stations.loadStations(trains: self.trains!)
+                self.stations = stations.loadStations(trains: self.trains ?? [])
             } catch {}
         }
     }
