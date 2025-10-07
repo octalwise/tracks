@@ -108,12 +108,14 @@ struct Scheduled {
 
                 var time = calendar.date(from: components)!
 
-                if nowComponents.hour! >= 4 && components.hour! < 4 {
-                    time = calendar.date(byAdding: .day, value: 1, to: time)!
-                }
-
+                // previous day
                 if nowComponents.hour! <= 4 && components.hour! >= 4 {
                     time = calendar.date(byAdding: .day, value: -1, to: time)!
+                }
+
+                // next day
+                if nowComponents.hour! >= 4 && components.hour! < 4 {
+                    time = calendar.date(byAdding: .day, value: 1, to: time)!
                 }
 
                 return ScheduledStop(
