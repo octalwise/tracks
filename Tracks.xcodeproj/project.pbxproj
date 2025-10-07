@@ -22,6 +22,7 @@
 		0FF17CC52B4BBE890082BD2F /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF17CC42B4BBE890082BD2F /* Station.swift */; };
 		0FF17CC72B4BC12C0082BD2F /* stations.json in Resources */ = {isa = PBXBuildFile; fileRef = 0FF17CC62B4BC12C0082BD2F /* stations.json */; };
 		2A0EBCA32E94E34600BDDB9E /* Holidays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0EBCA22E94E34600BDDB9E /* Holidays.swift */; };
+		2A0EBCAB2E94F32F00BDDB9E /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2A0EBCAA2E94F32F00BDDB9E /* AppIcon.icon */; };
 		6E568EBB5C625A9964CAC888 /* Pods_Tracks.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96C6162720045E884964FE9D /* Pods_Tracks.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		0FF17CC42B4BBE890082BD2F /* Station.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
 		0FF17CC62B4BC12C0082BD2F /* stations.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stations.json; sourceTree = "<group>"; };
 		2A0EBCA22E94E34600BDDB9E /* Holidays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holidays.swift; sourceTree = "<group>"; };
+		2A0EBCAA2E94F32F00BDDB9E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		6D831923CCE7F864EBBB98CF /* Pods-Tracks.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracks.debug.xcconfig"; path = "Target Support Files/Pods-Tracks/Pods-Tracks.debug.xcconfig"; sourceTree = "<group>"; };
 		96C6162720045E884964FE9D /* Pods_Tracks.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tracks.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5120FD220824EA2E1D85F24 /* Pods-Tracks.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracks.release.xcconfig"; path = "Target Support Files/Pods-Tracks/Pods-Tracks.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				0F6BBD7E2B1AA96E00CE5D1C /* TracksApp.swift */,
 				0F6BBD802B1AA96E00CE5D1C /* ContentView.swift */,
 				0F6BBD822B1AA96F00CE5D1C /* Assets.xcassets */,
+				2A0EBCAA2E94F32F00BDDB9E /* AppIcon.icon */,
 				0F6BBD842B1AA96F00CE5D1C /* Preview Content */,
 			);
 			path = Tracks;
@@ -185,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F6BBD862B1AA96F00CE5D1C /* Preview Assets.xcassets in Resources */,
+				2A0EBCAB2E94F32F00BDDB9E /* AppIcon.icon in Resources */,
 				0F6BBD832B1AA96F00CE5D1C /* Assets.xcassets in Resources */,
 				0FF17CC72B4BC12C0082BD2F /* stations.json in Resources */,
 			);
@@ -381,6 +385,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -421,6 +426,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
