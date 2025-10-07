@@ -38,6 +38,6 @@ struct Holidays {
     func isHoliday(_ date: Date) -> Bool {
         let comps = Calendar.current.dateComponents([.day, .month], from: date)
 
-        return self.holidays.contains { $0.day == comps.day && $0.month == comps.month }
+        return self.holidays.contains { $0.day == comps.day! && $0.month == comps.month! }
     }
 }
