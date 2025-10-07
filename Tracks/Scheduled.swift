@@ -89,7 +89,7 @@ struct Scheduled {
         }
     }
 
-    func fetchScheduled() -> [Train] {
+    func fetch() -> [Train] {
         let now = Date()
 
         let stops =

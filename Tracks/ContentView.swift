@@ -95,13 +95,13 @@ struct ContentView: View {
 
             // every 5am
             if comps.hour! == 5 && comps.minute! == 1 {
-                self.fetch(fetchScheduled: true)
+                self.fetch(scheduled: true)
                 self.lastUpdate = now
             }
         }
     }
 
-    func fetch(fetchScheduled: Bool = false) {
+    func fetch(scheduled fetchScheduled: Bool = false) {
         var urls = [
             "live": (url: "https://tracks-api.octalwise.com/trains", auth: true),
             "alerts": (url: "https://tracks-api.octalwise.com/alerts", auth: true)
@@ -110,7 +110,6 @@ struct ContentView: View {
         if self.holidays == nil {
             urls["holidays"] = (url: "https://www.caltrain.com/schedules/holiday-service-schedules", auth: false)
         }
-
         if self.scheduled == nil || fetchScheduled {
             urls["scheduled"] = (url: "https://www.caltrain.com", auth: false)
         }
@@ -142,18 +141,16 @@ struct ContentView: View {
                 let html = String(data: res["holidays"]!, encoding: .utf8)!
                 self.holidays = Holidays(html: html)
             }
-
             if self.scheduled == nil || fetchScheduled {
                 let html = String(data: res["scheduled"]!, encoding: .utf8)!
                 self.scheduled = Scheduled(html: html, holidays: self.holidays!)
             }
 
-            self.trains = self.scheduled!.fetchScheduled()
+            self.trains = self.scheduled!.fetch()
 
             if let live = res["live"] {
                 loadLive(data: live)
             }
-
             fetchStations()
 
             if let alerts = res["alerts"] {
