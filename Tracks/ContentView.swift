@@ -103,7 +103,7 @@ struct ContentView: View {
 
     func fetch(fetchScheduled: Bool = false) {
         var urls = [
-            "trains": (url: "https://tracks-api.octalwise.com/trains", auth: true),
+            "live": (url: "https://tracks-api.octalwise.com/trains", auth: true),
             "alerts": (url: "https://tracks-api.octalwise.com/alerts", auth: true)
         ]
 
@@ -150,9 +150,15 @@ struct ContentView: View {
 
             self.trains = self.scheduled!.fetchScheduled()
 
-            loadLive(data: res["trains"]!)
+            if let live = res["live"] {
+                loadLive(data: live)
+            }
+
             fetchStations()
-            loadAlerts(data: res["alerts"]!)
+
+            if let alerts = res["alerts"] {
+                loadAlerts(data: alerts)
+            }
         }
     }
 
