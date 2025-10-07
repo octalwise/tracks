@@ -31,12 +31,10 @@ struct StationsView: View {
                         } label: {
                             Image(systemName: "tram.fill")
                                 .foregroundStyle(south!.routeColor())
-                                .frame(height: 23)
                         }.gridColumnAlignment(.leading)
                     } else {
                         Image(systemName: "chevron.down")
                             .gridColumnAlignment(.leading)
-                            .frame(height: 23)
                     }
 
                     // station text
