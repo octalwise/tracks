@@ -65,8 +65,9 @@ struct Scheduled {
 
                         let formatter = DateFormatter()
 
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
+                        formatter.timeZone = TimeZone(identifier: "America/Los_Angeles")
                         formatter.dateFormat = "h:mma"
-                        formatter.timeZone = TimeZone(abbreviation: "PST")
 
                         guard let time = formatter.date(from: try timepoint.text()) else {
                             throw FormatError.formatError("Invalid time format in Caltrain data.")
@@ -84,7 +85,7 @@ struct Scheduled {
             }
         } catch {
             self.trains = []
-            self.stops  = []
+            self.stops = []
         }
     }
 

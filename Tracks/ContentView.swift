@@ -8,16 +8,12 @@ struct ContentView: View {
 
     @State var lastUpdate: Date? = nil
 
-    let scheduled: Scheduled? = nil
-    let holidays: Holidays? = nil
+    @State var scheduled: Scheduled? = nil
+    @State var holidays: Holidays? = nil
 
     // every 90 seconds
-    let trainsTimer =
+    let fetchTimer =
         Timer.publish(every: 90, on: .main, in: .common).autoconnect()
-
-    // every 180 seconds
-    let alertsTimer =
-        Timer.publish(every: 180, on: .main, in: .common).autoconnect()
 
     // every 5am
     let scheduledTimer =
@@ -28,12 +24,8 @@ struct ContentView: View {
             // all stations view
             NavigationStack {
                 ScrollView {
-                    if self.stations != nil && self.trains != nil {
-                        StationsView(trains: self.trains!, stations: self.stations!)
-                    } else {
-                        ProgressView() {
-                            Text("Loading Trains")
-                        }.padding(15)
+                    if self.stations != nil {
+                        StationsView(trains: self.trains ?? [], stations: self.stations!)
                     }
                 }.navigationTitle("Stations")
             }
@@ -85,20 +77,14 @@ struct ContentView: View {
         }
         .onAppear {
             self.fetchStations()
-            self.fetchTrains()
-            self.fetchAlerts()
+            self.fetch()
         }
         .refreshable {
-            self.fetchTrains()
-            self.fetchAlerts()
+            self.fetch()
         }
-        .onReceive(self.trainsTimer) { _ in
+        .onReceive(self.fetchTimer) { _ in
             // every 90 seconds
-            self.fetchTrains()
-        }
-        .onReceive(self.alertsTimer) { _ in
-            // every 180 seconds
-            self.fetchAlerts()
+            self.fetch()
         }
         .onReceive(self.scheduledTimer) { now in
             if let last = self.lastUpdate, Calendar.current.isDate(now, inSameDayAs: last) {
@@ -109,79 +95,79 @@ struct ContentView: View {
 
             // every 5am
             if comps.hour == 5 && comps.minute == 1 {
-                if self.holidays == nil {
-                    self.createHolidays()
-                } else {
-                    self.createScheduled()
-                }
-
+                self.fetch(fetchScheduled: true)
                 self.lastUpdate = now
             }
         }
     }
 
-    func fetchTrains() {
+    func fetch(fetchScheduled: Bool = false) {
+        var urls = [
+            "trains": (url: "https://tracks-api.octalwise.com/trains", auth: true),
+            "alerts": (url: "https://tracks-api.octalwise.com/alerts", auth: true)
+        ]
+
         if self.holidays == nil {
-            createHolidays()
-        } else if self.scheduled == nil {
-            createScheduled()
-        } else {
+            urls["holidays"] = (url: "https://www.caltrain.com/schedules/holiday-service-schedules", auth: false)
+        }
+
+        if self.scheduled == nil || fetchScheduled {
+            urls["scheduled"] = (url: "https://www.caltrain.com", auth: false)
+        }
+
+        let group = DispatchGroup()
+        var res: [String: Data] = [:]
+
+        for (label, req) in urls {
+            group.enter()
+
+            let url = URL(string: req.url)!
+            var request = URLRequest(url: url)
+
+            if req.auth {
+                request.setValue("AUTH", forHTTPHeaderField: "Authorization")
+            }
+
+            URLSession.shared.dataTask(with: request) { data, _, _ in
+                if let data = data {
+                    res[label] = data
+                }
+
+                group.leave()
+            }.resume()
+        }
+
+        group.notify(queue: .main) {
+            if self.holidays == nil {
+                let html = String(data: res["holidays"]!, encoding: .utf8)!
+                self.holidays = Holidays(html: html)
+            }
+
+            if self.scheduled == nil || fetchScheduled {
+                let html = String(data: res["scheduled"]!, encoding: .utf8)!
+                self.scheduled = Scheduled(html: html, holidays: self.holidays!)
+            }
+
             self.trains = self.scheduled!.fetchScheduled()
-            self.fetchLive()
+
+            loadLive(data: res["trains"]!)
+            fetchStations()
+            loadAlerts(data: res["alerts"]!)
         }
     }
 
-    func createHolidays() {
-        let url = URL(string: "https://www.caltrain.com/schedules/holiday-service-schedules")!
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                let holidays = Holidays(html: String(data: data, encoding: .utf8)!)
-
-                createScheduled()
-            }
-        }.resume()
-    }
-
-    func createScheduled() {
-        let url = URL(string: "https://www.caltrain.com")!
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data {
-                let scheduled = Scheduled(
-                    html: String(data: data, encoding: .utf8)!,
-                    holidays: holidays!
-                )
-
-                self.trains = scheduled.fetchScheduled()
-                self.fetchLive()
-            }
-        }.resume()
-    }
-
-    func fetchLive() {
-        let url = URL(string: "https://tracks-api.octalwise.com/trains")!
-
-        var request = URLRequest(url: url)
-        request.setValue("AUTH", forHTTPHeaderField: "Authorization")
-
+    func loadLive(data: Data) {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                do {
-                    let data = try decoder.decode([Train].self, from: data)
-                    let trainIDs = data.map { $0.id }
+        do {
+            let data = try decoder.decode([Train].self, from: data)
+            let trainIDs = data.map { $0.id }
 
-                    self.trains = self.trains!.filter { train in
-                        trainIDs.first { train.id == $0 } == nil
-                    } + data
-                } catch {}
-            }
-
-            self.fetchStations()
-        }.resume()
+            self.trains = self.trains!.filter { train in
+                trainIDs.first { train.id == $0 } == nil
+            } + data
+        } catch {}
     }
 
     func fetchStations() {
@@ -198,22 +184,13 @@ struct ContentView: View {
         }
     }
 
-    func fetchAlerts() {
-        let url = URL(string: "https://tracks-api.octalwise.com/alerts")!
-
-        var request = URLRequest(url: url)
-        request.setValue("AUTH", forHTTPHeaderField: "Authorization")
-
+    func loadAlerts(data: Data) {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                do {
-                    let data = try decoder.decode([Alert].self, from: data)
-                    self.alerts = data
-                } catch {}
-            }
-        }.resume()
+        do {
+            let data = try decoder.decode([Alert].self, from: data)
+            self.alerts = data
+        } catch {}
     }
 }
