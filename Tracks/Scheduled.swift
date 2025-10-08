@@ -23,7 +23,7 @@ struct Scheduled {
         let isWeekend = Calendar.current.isDateInWeekend(shifted)
 
         let dayType =
-            (holidays.isHoliday(shifted) || isWeekend) ? "weekend" : "weekday"
+            (isWeekend || holidays.isHoliday(shifted)) ? "weekend" : "weekday"
 
         self.trains = []
         self.stops = []
