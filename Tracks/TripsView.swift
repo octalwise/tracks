@@ -8,6 +8,9 @@ struct TripsView: View {
     @State var from: BothStations
     @State var to: BothStations
 
+    @AppStorage("from") var fromID = -1
+    @AppStorage("to") var toID = -1
+
     @State var showPast = false
 
     var body: some View {
@@ -78,6 +81,25 @@ struct TripsView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color(.systemGray6))
                     )
+                }
+            }
+            .onChange(of: self.from) { val in
+                self.fromID = val.north.id
+            }
+            .onChange(of: self.to) { val in
+                self.toID = val.north.id
+            }
+            .onAppear {
+                if self.fromID != -1 {
+                    self.from = self.stations.first {
+                        $0.contains(id: self.fromID)
+                    }!
+                }
+
+                if self.toID != -1 {
+                    self.to = self.stations.first {
+                        $0.contains(id: self.toID)
+                    }!
                 }
             }
             .padding(.top, 10)
