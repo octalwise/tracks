@@ -202,7 +202,7 @@ struct TripsView: View {
                     to: to!,
 
                     // check if past stop
-                    past: from!.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: from!.expected < Date()
                 )
             }
             .sorted {

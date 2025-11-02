@@ -132,7 +132,7 @@ struct StationView: View {
                     delay: stop.scheduled.distance(to: stop.expected) / 60,
 
                     // check if past stop
-                    past: stop.expected < Calendar.current.date(byAdding: .minute, value: -1, to: Date())!
+                    past: stop.expected < Date()
                 )
             }
     }
