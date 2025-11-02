@@ -94,7 +94,7 @@ struct ContentView: View {
             let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
 
             // every 5am
-            if comps.hour! > 5 || (comps.hour! == 5 && comps.minute! >= 0) {
+            if comps.hour! > 5 || (comps.hour! == 5 && comps.minute! > 0) {
                 self.fetch(scheduled: true)
                 self.lastUpdate = now
             }
