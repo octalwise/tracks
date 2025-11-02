@@ -5,7 +5,13 @@ struct StationsView: View {
     let trains: [Train]
     let stations: [BothStations]
 
+    @State var tick = Date()
+    let refresh =
+        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
     var body: some View {
+        let _ = tick
+
         let stationTrains = self.stationTrains()
 
         Grid {
@@ -71,7 +77,11 @@ struct StationsView: View {
                 // expand grid width
                 Divider().opacity(0)
             }
-        }.padding([.top, .bottom], 15)
+        }
+        .padding([.top, .bottom], 15)
+        .onReceive(refresh) { time in
+            self.tick = time
+        }
     }
 
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {

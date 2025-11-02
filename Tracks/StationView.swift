@@ -10,7 +10,13 @@ struct StationView: View {
     @State var direction = "N"
     @State var showPast = false
 
+    @State var tick = Date()
+    let refresh =
+        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
     var body: some View {
+        let _ = tick
+
         let stopTrains =
             self.stopTrains().filter { self.showPast || !$0.past }
 
@@ -96,6 +102,9 @@ struct StationView: View {
                 // show past if no future stops
                 self.showPast = true
             }
+        }
+        .onReceive(refresh) { time in
+            self.tick = time
         }
     }
 

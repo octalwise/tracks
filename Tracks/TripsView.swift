@@ -13,7 +13,13 @@ struct TripsView: View {
 
     @State var showPast = false
 
+    @State var tick = Date()
+    let refresh =
+        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
     var body: some View {
+        let _ = tick
+
         let trainsStops =
             self.trainsStops().filter { self.showPast || !$0.past }
 
@@ -164,11 +170,15 @@ struct TripsView: View {
                     Divider().opacity(0)
                 }
             }.padding(.bottom, 15)
-        }.onAppear {
+        }
+        .onAppear {
             if trainsStops.count == 0 {
                 // show past if no future stops
                 self.showPast = true
             }
+        }
+        .onReceive(refresh) { time in
+            self.tick = time
         }
     }
 
