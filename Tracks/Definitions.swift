@@ -43,6 +43,30 @@ struct Alert: Codable, Hashable {
     let description: String?
 }
 
+extension View {
+    @ViewBuilder
+    func applyForeground(color: Color) -> some View {
+        if #available(iOS 26.0, *) {
+            self
+        } else {
+            self.foregroundStyle(color)
+        }
+    }
+
+    @ViewBuilder
+    func applyButtonStyle(color: Color) -> some View {
+        if #available(iOS 26.0, *) {
+            self
+                .buttonStyle(.glass)
+                .glassEffect(.regular.tint(color.opacity(0.3)))
+        } else {
+            self
+                .buttonStyle(.bordered)
+                .buttonBorderShape(ButtonBorderShape.capsule)
+        }
+    }
+}
+
 extension Date {
     func formatTime() -> String {
         let is24h = DateFormatter.dateFormat(

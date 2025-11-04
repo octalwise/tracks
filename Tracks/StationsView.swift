@@ -21,11 +21,7 @@ struct StationsView: View {
             ) { index, data in
                 let (station, south, north) = data
 
-                if index > 0 {
-                    Divider().padding(.bottom, 4)
-                }
-
-                GridRow {
+                HStack {
                     if south != nil {
                         // southbound train
                         NavigationLink {
@@ -36,12 +32,19 @@ struct StationsView: View {
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundStyle(south!.routeColor())
-                        }.gridColumnAlignment(.leading)
+                                .applyForeground(color: south!.routeColor())
+                                .frame(height: 22)
+                        }
+                        .applyButtonStyle(color: south!.routeColor())
+                        .gridColumnAlignment(.leading)
+                        .frame(width: 22, height: 22)
                     } else {
                         Image(systemName: "chevron.down")
                             .gridColumnAlignment(.leading)
+                            .frame(width: 22, height: 22)
                     }
+
+                    Spacer()
 
                     // station text
                     NavigationLink {
@@ -54,6 +57,8 @@ struct StationsView: View {
                         Text(station.name).lineLimit(1)
                     }
 
+                    Spacer()
+
                     if north != nil {
                         // northbound train
                         NavigationLink {
@@ -64,19 +69,24 @@ struct StationsView: View {
                             )
                         } label: {
                             Image(systemName: "tram.fill")
-                                .foregroundStyle(north!.routeColor())
-                        }.gridColumnAlignment(.trailing)
+                                .applyForeground(color: north!.routeColor())
+                                .frame(height: 22)
+                        }
+                        .applyButtonStyle(color: north!.routeColor())
+                        .gridColumnAlignment(.leading)
+                        .frame(width: 22, height: 22)
                     } else {
                         Image(systemName: "chevron.up")
-                            .gridColumnAlignment(.trailing)
+                            .gridColumnAlignment(.leading)
+                            .frame(width: 22, height: 22)
                     }
-                }.padding([.leading, .trailing], 20)
+                }
+                .padding([.leading, .trailing], 40)
+                .padding(.bottom, 10)
             }
 
-            if stationTrains.count == 1 {
-                // expand grid width
-                Divider().opacity(0)
-            }
+            // expand grid width
+            Divider().opacity(0)
         }
         .padding([.top, .bottom], 15)
         .onReceive(refresh) { time in
