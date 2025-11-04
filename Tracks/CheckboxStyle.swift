@@ -5,13 +5,27 @@ struct CheckboxStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            Label {
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(
+                            configuration.isOn ? Color.accentColor : .secondary,
+                            lineWidth: 1.5
+                        )
+                        .background(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(configuration.isOn ? Color.accentColor : Color.clear)
+                        )
+                        .frame(width: 18, height: 18)
+
+                    if configuration.isOn {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+
                 configuration.label
-            } icon: {
-                // checkbox icon
-                Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(configuration.isOn ? Color.accentColor : .secondary)
-                    .imageScale(.medium)
             }
         }
         .buttonStyle(.plain)
