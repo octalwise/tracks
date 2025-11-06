@@ -8,7 +8,9 @@ struct StationView: View {
     let stations: [BothStations]
 
     @State var direction = "N"
+
     @State var showPast = false
+    @State var setPast = true
 
     @State var tick = Date()
     let refresh =
@@ -17,8 +19,7 @@ struct StationView: View {
     var body: some View {
         let _ = tick
 
-        let stopTrains =
-            self.stopTrains().filter { self.showPast || !$0.past }
+        let stopTrains = self.stopTrains().filter { self.showPast || !$0.past }
 
         ScrollView {
             // select direction
@@ -26,15 +27,22 @@ struct StationView: View {
                 Text("Northbound").tag("N")
                 Text("Southbound").tag("S")
             }
+            .onChange(of: self.direction) { val in autoPast() }
             .pickerStyle(.segmented)
             .padding(.top, 15)
             .padding([.leading, .trailing], 20)
 
             HStack {
-                // toggle past trains
-                Toggle(isOn: self.$showPast) {
-                    Text("Show Past Trains")
-                }.toggleStyle(CheckboxStyle())
+                Toggle(
+                    "Show Past Trains",
+                    isOn: Binding(
+                        get: { self.showPast },
+                        set: { val in
+                            self.showPast = val
+                            self.setPast = false
+                        }
+                    )
+                ).toggleStyle(CheckboxStyle())
 
                 Spacer()
             }
@@ -88,6 +96,12 @@ struct StationView: View {
                     }
                     .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.animation(.easeOut(duration: 0.5)),
+                            removal: .opacity.animation(.easeOut(duration: 0.15))
+                        )
+                    )
                 }
 
                 if stopTrains.count == 1 {
@@ -97,14 +111,17 @@ struct StationView: View {
             }.padding(.bottom, 15)
         }
         .navigationTitle(self.station.name)
-        .onAppear {
-            if stopTrains.count == 0 {
-                // show past if no future stops
-                self.showPast = true
-            }
-        }
-        .onReceive(refresh) { time in
-            self.tick = time
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: self.tick.hashValue ^ self.showPast.hashValue
+        )
+        .onAppear { autoPast() }
+        .onReceive(refresh) { self.tick = $0 }
+    }
+
+    func autoPast() {
+        if self.setPast {
+            self.showPast = !self.stopTrains().contains(where: { !$0.past })
         }
     }
 

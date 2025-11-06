@@ -16,10 +16,12 @@ struct AlertsView: View {
 
                 AlertItem(alert: alert)
                     .padding([.leading, .trailing], 20)
+                    .transition(.opacity)
             }
         }
         .padding(.top, 10)
         .padding(.bottom, 15)
+        .animation(.easeInOut(duration: 0.3), value: self.alerts)
     }
 }
 
@@ -32,7 +34,6 @@ struct AlertItem: View {
         VStack {
             Button(action: {
                 withAnimation(.none) {
-                    // toggle expanded alert
                     expanded = !expanded
                 }
             }) {

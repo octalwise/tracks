@@ -71,6 +71,7 @@ struct StationsView: View {
                             Image(systemName: "tram.fill")
                                 .applyForeground(color: north!.routeColor())
                                 .frame(height: 22)
+                                .transition(.opacity)
                         }
                         .applyButtonStyle(color: north!.routeColor())
                         .gridColumnAlignment(.leading)
@@ -79,6 +80,7 @@ struct StationsView: View {
                         Image(systemName: "chevron.up")
                             .gridColumnAlignment(.leading)
                             .frame(width: 22, height: 22)
+                            .transition(.opacity)
                     }
                 }
                 .padding([.leading, .trailing], 40)
@@ -89,9 +91,11 @@ struct StationsView: View {
             Divider().opacity(0)
         }
         .padding([.top, .bottom], 15)
-        .onReceive(refresh) { time in
-            self.tick = time
-        }
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: self.trains.hashValue ^ self.stations.hashValue
+        )
+        .onReceive(refresh) { self.tick = $0 }
     }
 
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {

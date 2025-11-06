@@ -12,6 +12,7 @@ struct TripsView: View {
     @AppStorage("to") var toID = -1
 
     @State var showPast = false
+    @State var setPast = false
 
     @State var tick = Date()
     let refresh =
@@ -20,8 +21,7 @@ struct TripsView: View {
     var body: some View {
         let _ = tick
 
-        let trainsStops =
-            self.trainsStops().filter { self.showPast || !$0.past }
+        let trainsStops = self.trainsStops().filter { self.showPast || !$0.past }
 
         VStack {
             HStack {
@@ -91,9 +91,11 @@ struct TripsView: View {
             }
             .onChange(of: self.from) { val in
                 self.fromID = val.north.id
+                autoPast()
             }
             .onChange(of: self.to) { val in
                 self.toID = val.north.id
+                autoPast()
             }
             .onAppear {
                 if self.fromID != -1 {
@@ -113,9 +115,16 @@ struct TripsView: View {
 
             HStack {
                 // toggle past trains
-                Toggle(isOn: self.$showPast) {
-                    Text("Show Past Trains")
-                }.toggleStyle(CheckboxStyle())
+                Toggle(
+                    "Show Past Trains",
+                    isOn: Binding(
+                        get: { self.showPast },
+                        set: { val in
+                            self.showPast = val
+                            self.setPast = false
+                        }
+                    )
+                ).toggleStyle(CheckboxStyle())
 
                 Spacer()
             }
@@ -163,6 +172,12 @@ struct TripsView: View {
                     }
                     .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.animation(.easeOut(duration: 0.5)),
+                            removal: .opacity.animation(.easeOut(duration: 0.15))
+                        )
+                    )
                 }
 
                 if trainsStops.count == 1 {
@@ -171,14 +186,17 @@ struct TripsView: View {
                 }
             }.padding(.bottom, 15)
         }
-        .onAppear {
-            if trainsStops.count == 0 {
-                // show past if no future stops
-                self.showPast = true
-            }
-        }
-        .onReceive(refresh) { time in
-            self.tick = time
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: self.tick.hashValue ^ self.showPast.hashValue
+        )
+        .onAppear { autoPast() }
+        .onReceive(refresh) { self.tick = $0 }
+    }
+
+    func autoPast() {
+        if self.setPast {
+            self.showPast = !self.trainsStops().contains(where: { !$0.past })
         }
     }
 

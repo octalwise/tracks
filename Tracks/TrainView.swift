@@ -82,6 +82,12 @@ struct TrainView: View {
                     }
                     .padding([.leading, .trailing], 20)
                     .opacity(past ? 0.6 : 1.0)
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.animation(.easeOut(duration: 0.5)),
+                            removal: .opacity.animation(.easeOut(duration: 0.15))
+                        )
+                    )
                 }
 
                 if stopStations.count == 1 {
@@ -93,15 +99,16 @@ struct TrainView: View {
         .navigationTitle(
             "Train \(self.train.id)\(!self.train.live ? "*" : "")"
         )
+        .animation(
+            .easeInOut(duration: 0.3),
+            value: self.tick.hashValue ^ self.showPast.hashValue
+        )
         .onAppear {
             if stopStations.count == 0 {
-                // show past if no future stops
                 self.showPast = true
             }
         }
-        .onReceive(refresh) { time in
-            self.tick = time
-        }
+        .onReceive(refresh) { self.tick = $0 }
     }
 
     func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {
