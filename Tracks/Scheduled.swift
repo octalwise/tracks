@@ -19,8 +19,6 @@ struct Scheduled {
     var stops: [ScheduledStop]
 
     init(html: String, holidays: Holidays) {
-        let shifted = Calendar.current.date(byAdding: .hour, value: -3, to: Date())!
-
         self.trains = []
         self.stops = []
 

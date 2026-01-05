@@ -116,7 +116,7 @@ struct ContentView: View {
             let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
 
             // every 3am
-            if comps.hour! > 3 || (comps.hour! == 3 && comps.minute! >= 0) {
+            if comps.hour! >= 3 {
                 self.fetch(scheduled: true)
                 self.lastUpdate = now
             }
