@@ -7,6 +7,7 @@ struct Train: Codable, Hashable {
 
     let direction: String
     let route: String
+    let service: String
 
     let location: Int?
     let stops: [Stop]

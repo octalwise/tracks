@@ -5,6 +5,7 @@ struct ScheduledTrain {
     let id: Int
     let direction: String
     let route: String
+    let service: String
 }
 
 struct ScheduledStop {
@@ -20,11 +21,6 @@ struct Scheduled {
     init(html: String, holidays: Holidays) {
         let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
 
-        let isWeekend = Calendar.current.isDateInWeekend(shifted)
-
-        let dayType =
-            (isWeekend || holidays.isHoliday(shifted)) ? "weekend" : "weekday"
-
         self.trains = []
         self.stops = []
 
@@ -36,10 +32,11 @@ struct Scheduled {
                     try table.parent()!.attr("data-direction") == "northbound" ? "N" : "S"
 
                 for header in try table.select(
-                    "tr:first-child td.schedule-trip-header[data-service-type=\(dayType)]"
+                    "tr:first-child td.schedule-trip-header"
                 ) {
                     let train = Int(try header.attr("data-trip-id"))!
                     let fullRoute = try header.attr("data-route-id")
+                    let service = try header.attr("data-service-type")
 
                     let isLocal = fullRoute == "Local Weekday" || fullRoute == "Local Weekend"
                     let route = isLocal ? "Local" : fullRoute
@@ -48,7 +45,8 @@ struct Scheduled {
                         ScheduledTrain(
                             id: train,
                             direction: direction,
-                            route: route
+                            route: route,
+                            service: service
                         )
                     )
                 }
@@ -144,8 +142,9 @@ struct Scheduled {
 
                 direction: train.direction,
                 route: train.route,
-                location: location,
+                service: train.service,
 
+                location: location,
                 stops: trainStops.map {
                     Stop(
                         station: $0.station,

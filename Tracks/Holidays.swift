@@ -37,7 +37,13 @@ struct Holidays {
 
     func isHoliday(_ date: Date) -> Bool {
         let comps = Calendar.current.dateComponents([.day, .month], from: date)
-
         return self.holidays.contains { $0.day == comps.day! && $0.month == comps.month! }
+    }
+
+    func service() -> String {
+        let shifted = Calendar.current.date(byAdding: .hour, value: -4, to: Date())!
+
+        let isWeekend = Calendar.current.isDateInWeekend(shifted)
+        return (isWeekend || self.isHoliday(shifted)) ? "weekend" : "weekday";
     }
 }

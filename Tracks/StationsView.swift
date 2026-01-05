@@ -5,6 +5,8 @@ struct StationsView: View {
     let trains: [Train]
     let stations: [BothStations]
 
+    let altService: Bool
+
     @State var tick = Date()
     let refresh =
         Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -37,6 +39,7 @@ struct StationsView: View {
                         }
                         .applyButtonStyle(color: south!.routeColor())
                         .gridColumnAlignment(.leading)
+                        .opacity(altService ? 0.4 : 1.0)
                         .frame(width: 22, height: 22)
                     } else {
                         Image(systemName: "chevron.down")

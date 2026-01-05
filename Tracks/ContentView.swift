@@ -11,6 +11,9 @@ struct ContentView: View {
     @State var scheduled: Scheduled? = nil
     @State var holidays: Holidays? = nil
 
+    @State var today: String?
+    @State var service: String?
+
     // every 90 seconds
     let fetchTimer =
         Timer.publish(every: 90, on: .main, in: .common).autoconnect()
@@ -20,12 +23,30 @@ struct ContentView: View {
         Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
+        let serviceTrains =
+            self.trains?.filter { train in
+                guard let service = self.service, let today = self.today else {
+                    return false
+                }
+
+                return train.service == service || (train.service == "normal" && service == today)
+            }
+
         TabView {
             // all stations view
             NavigationStack {
                 ScrollView {
                     if self.stations != nil {
-                        StationsView(trains: self.trains ?? [], stations: self.stations!)
+                        StationsView(
+                            trains: serviceTrains ?? [],
+                            stations: self.stations!,
+                            altService: self.service != nil && self.service! != self.today!
+                        )
+                        .toolbar {
+                            if service != nil {
+                                serviceButton()
+                            }
+                        }
                     }
                 }.navigationTitle("Stations")
             }
@@ -36,18 +57,19 @@ struct ContentView: View {
             // trips view
             NavigationStack {
                 ScrollView {
-                    if self.stations != nil && self.trains != nil {
+                    if self.stations != nil && serviceTrains != nil {
                         TripsView(
                             stations: self.stations!,
-                            trains: self.trains!,
+                            trains: serviceTrains!,
 
-                            from: self.stations!.first {
-                                $0.name == "Palo Alto"
-                            }!,
-                            to: self.stations!.first {
-                                $0.name == "San Mateo"
-                            }!
+                            from: self.stations!.first { $0.name == "Palo Alto" }!,
+                            to: self.stations!.first { $0.name == "San Mateo" }!
                         )
+                        .toolbar {
+                            if service != nil {
+                                serviceButton()
+                            }
+                        }
                     } else {
                         ProgressView() {
                             Text("Loading Trains")
@@ -101,6 +123,19 @@ struct ContentView: View {
         }
     }
 
+    func serviceButton() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Picker("Service", selection: self.$service) {
+                    Label("Weekday", systemImage: "calendar").tag("weekday")
+                    Label("Weekend", systemImage: "clock").tag("weekend")
+                }
+            } label: {
+                Image(systemName: self.service == "weekday" ? "calendar" : "clock")
+            }
+        }
+    }
+
     func fetch(scheduled fetchScheduled: Bool = false) {
         var urls = [
             "live": (url: "https://tracks-api.octalwise.com/trains", auth: true),
@@ -140,6 +175,12 @@ struct ContentView: View {
             if self.holidays == nil {
                 let html = String(data: res["holidays"]!, encoding: .utf8)!
                 self.holidays = Holidays(html: html)
+
+                self.today = self.holidays!.service()
+
+                if self.service == nil {
+                    self.service = self.today
+                }
             }
             if self.scheduled == nil || fetchScheduled {
                 let html = String(data: res["scheduled"]!, encoding: .utf8)!
