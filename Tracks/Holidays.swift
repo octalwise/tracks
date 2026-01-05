@@ -41,7 +41,7 @@ struct Holidays {
     }
 
     func service() -> String {
-        let shifted = Calendar.current.date(byAdding: .hour, value: -4, to: Date())!
+        let shifted = Calendar.current.date(byAdding: .hour, value: -3, to: Date())!
 
         let isWeekend = Calendar.current.isDateInWeekend(shifted)
         return (isWeekend || self.isHoliday(shifted)) ? "weekend" : "weekday";

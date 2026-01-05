@@ -18,7 +18,7 @@ struct ContentView: View {
     let fetchTimer =
         Timer.publish(every: 90, on: .main, in: .common).autoconnect()
 
-    // every 5am
+    // every 3am
     let scheduledTimer =
         Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
@@ -115,8 +115,8 @@ struct ContentView: View {
 
             let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
 
-            // every 5am
-            if comps.hour! > 5 || (comps.hour! == 5 && comps.minute! > 0) {
+            // every 3am
+            if comps.hour! > 3 || (comps.hour! == 3 && comps.minute! >= 0) {
                 self.fetch(scheduled: true)
                 self.lastUpdate = now
             }

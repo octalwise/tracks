@@ -19,7 +19,7 @@ struct Scheduled {
     var stops: [ScheduledStop]
 
     init(html: String, holidays: Holidays) {
-        let shifted = Calendar.current.date(byAdding: .hour, value: -5, to: Date())!
+        let shifted = Calendar.current.date(byAdding: .hour, value: -3, to: Date())!
 
         self.trains = []
         self.stops = []
@@ -106,13 +106,11 @@ struct Scheduled {
 
                 var time = calendar.date(from: components)!
 
-                // previous day
-                if nowComponents.hour! <= 4 && components.hour! >= 4 {
+                if nowComponents.hour! < 3 && components.hour! >= 3 {
+                    // previous day
                     time = calendar.date(byAdding: .day, value: -1, to: time)!
-                }
-
-                // next day
-                if nowComponents.hour! >= 4 && components.hour! < 4 {
+                } else if nowComponents.hour! >= 3 && components.hour! < 3 {
+                    // next day
                     time = calendar.date(byAdding: .day, value: 1, to: time)!
                 }
 
