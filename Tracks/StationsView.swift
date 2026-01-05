@@ -30,7 +30,8 @@ struct StationsView: View {
                             TrainView(
                                 train: south!,
                                 trains: self.trains,
-                                stations: self.stations
+                                stations: self.stations,
+                                altService: self.altService
                             )
                         } label: {
                             Image(systemName: "tram.fill")
@@ -54,7 +55,8 @@ struct StationsView: View {
                         StationView(
                             station: station,
                             trains: self.trains,
-                            stations: self.stations
+                            stations: self.stations,
+                            altService: self.altService
                         )
                     } label: {
                         Text(station.name).lineLimit(1)
@@ -68,7 +70,8 @@ struct StationsView: View {
                             TrainView(
                                 train: north!,
                                 trains: self.trains,
-                                stations: self.stations
+                                stations: self.stations,
+                                altService: self.altService
                             )
                         } label: {
                             Image(systemName: "tram.fill")
@@ -78,6 +81,7 @@ struct StationsView: View {
                         }
                         .applyButtonStyle(color: north!.routeColor())
                         .gridColumnAlignment(.leading)
+                        .opacity(self.altService ? 0.4 : 1.0)
                         .frame(width: 22, height: 22)
                     } else {
                         Image(systemName: "chevron.up")

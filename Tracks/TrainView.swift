@@ -7,6 +7,8 @@ struct TrainView: View {
     let trains: [Train]
     let stations: [BothStations]
 
+    let altService: Bool
+
     @State var showPast = false
 
     @State var tick = Date()
@@ -55,7 +57,8 @@ struct TrainView: View {
                                 StationView(
                                     station: station,
                                     trains: self.trains,
-                                    stations: self.stations
+                                    stations: self.stations,
+                                    altService: self.altService
                                 )
                             } label: {
                                 Text(station.name).lineLimit(1)
@@ -81,7 +84,7 @@ struct TrainView: View {
                         }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
-                    .opacity(past ? 0.6 : 1.0)
+                    .opacity(past || self.altService ? 0.6 : 1.0)
                     .transition(
                         .asymmetric(
                             insertion: .opacity.animation(.easeOut(duration: 0.5)),

@@ -5,6 +5,8 @@ struct TripsView: View {
     let stations: [BothStations]
     let trains: [Train]
 
+    let altService: Bool
+
     @State var from: BothStations
     @State var to: BothStations
 
@@ -149,7 +151,8 @@ struct TripsView: View {
                             TrainView(
                                 train: train,
                                 trains: self.trains,
-                                stations: self.stations
+                                stations: self.stations,
+                                altService: self.altService
                             )
                         } label: {
                             HStack {
@@ -171,7 +174,7 @@ struct TripsView: View {
                             .gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
-                    .opacity(past ? 0.6 : 1.0)
+                    .opacity(past || self.altService ? 0.6 : 1.0)
                     .transition(
                         .asymmetric(
                             insertion: .opacity.animation(.easeOut(duration: 0.5)),

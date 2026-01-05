@@ -32,6 +32,8 @@ struct ContentView: View {
                 return train.service == service || (train.service == "normal" && service == today)
             }
 
+        let altService = self.service != nil && self.service! != self.today!
+
         TabView {
             // all stations view
             NavigationStack {
@@ -40,7 +42,7 @@ struct ContentView: View {
                         StationsView(
                             trains: serviceTrains ?? [],
                             stations: self.stations!,
-                            altService: self.service != nil && self.service! != self.today!
+                            altService: altService
                         )
                         .toolbar {
                             if service != nil {
@@ -61,6 +63,7 @@ struct ContentView: View {
                         TripsView(
                             stations: self.stations!,
                             trains: serviceTrains!,
+                            altService: altService,
 
                             from: self.stations!.first { $0.name == "Palo Alto" }!,
                             to: self.stations!.first { $0.name == "San Mateo" }!
