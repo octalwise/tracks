@@ -178,16 +178,16 @@ struct ContentView: View {
             if self.holidays == nil {
                 let html = String(data: res["holidays"]!, encoding: .utf8)!
                 self.holidays = Holidays(html: html)
-
-                self.today = self.holidays!.service()
-
-                if self.service == nil {
-                    self.service = self.today
-                }
             }
             if self.scheduled == nil || fetchScheduled {
                 let html = String(data: res["scheduled"]!, encoding: .utf8)!
                 self.scheduled = Scheduled(html: html, holidays: self.holidays!)
+            }
+
+            self.today = self.holidays!.service()
+
+            if self.service == nil {
+                self.service = self.today
             }
 
             self.trains = self.scheduled!.fetch()
