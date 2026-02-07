@@ -105,10 +105,8 @@ struct Scheduled {
                 var time = calendar.date(from: components)!
 
                 if nowComponents.hour! < 3 && components.hour! >= 3 {
-                    // previous day
                     time = calendar.date(byAdding: .day, value: -1, to: time)!
                 } else if nowComponents.hour! >= 3 && components.hour! < 3 {
-                    // next day
                     time = calendar.date(byAdding: .day, value: 1, to: time)!
                 }
 

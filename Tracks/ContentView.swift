@@ -120,7 +120,7 @@ struct ContentView: View {
 
             // every 3am
             if comps.hour! >= 3 {
-                self.fetch(scheduled: true)
+                self.fetch(full: true)
                 self.lastUpdate = now
             }
         }
@@ -139,7 +139,7 @@ struct ContentView: View {
         }
     }
 
-    func fetch(scheduled fetchScheduled: Bool = false) {
+    func fetch(full fullFetch: Bool = false) {
         var urls = [
             "live": (url: "https://tracks-api.octalwise.com/trains", auth: true),
             "alerts": (url: "https://tracks-api.octalwise.com/alerts", auth: true)
@@ -148,7 +148,7 @@ struct ContentView: View {
         if self.holidays == nil {
             urls["holidays"] = (url: "https://www.caltrain.com/schedules/holiday-service-schedules", auth: false)
         }
-        if self.scheduled == nil || fetchScheduled {
+        if self.scheduled == nil || fullFetch {
             urls["scheduled"] = (url: "https://www.caltrain.com", auth: false)
         }
 
@@ -176,17 +176,16 @@ struct ContentView: View {
 
         group.notify(queue: .main) {
             if self.holidays == nil {
-                let html = String(data: res["holidays"]!, encoding: .utf8)!
+                let html = String(decoding: res["holidays"]!, as: UTF8.self)
                 self.holidays = Holidays(html: html)
             }
-            if self.scheduled == nil || fetchScheduled {
-                let html = String(data: res["scheduled"]!, encoding: .utf8)!
+            if self.scheduled == nil || fullFetch {
+                let html = String(decoding: res["scheduled"]!, as: UTF8.self)
                 self.scheduled = Scheduled(html: html, holidays: self.holidays!)
             }
 
             self.today = self.holidays!.service()
-
-            if self.service == nil {
+            if self.service == nil || fullFetch {
                 self.service = self.today
             }
 
