@@ -123,12 +123,7 @@ struct Scheduled {
                     .filter { $0.train == train.id }
                     .sorted { $0.time < $1.time }
 
-            let times = trainStops.map { $0.time }
-
-            let location =
-                times.min()! <= now && times.max()! >= now
-                    ? trainStops.last { $0.time <= now }!.station
-                    : nil
+            let location = getLocation(direction: train.direction, stops: trainStops)
 
             return Train(
                 id: train.id,
@@ -148,5 +143,46 @@ struct Scheduled {
                 }
             )
         }
+    }
+
+    func getLocation(direction: String, stops: [ScheduledStop]) -> Int? {
+        let now = Date()
+
+        let times = stops.map { $0.time }
+        let first = times.first!
+        let last = times.last!
+
+        if first > now || last < now {
+            return nil;
+        }
+
+        let nextStop = stops.first { $0.time > now }!
+        let nextIdx = stops.firstIndex { $0.station == nextStop.station }!
+
+        let prevIdx = max(0, nextIdx - 1)
+        let prevStop = stops[prevIdx]
+
+        let idx1 = STATIONS.firstIndex { $0.contains(id: prevStop.station) }!
+        let idx2 = STATIONS.firstIndex { $0.contains(id: nextStop.station) }!
+
+        let station: StationInfo?
+
+        if prevStop.time > now {
+            station = nil
+        } else if idx1 == idx2 {
+            station = STATIONS[idx1]
+        } else if idx2 == STATIONS.count - 1 && now > nextStop.time.addingTimeInterval(20) {
+            station = nil
+        } else if now >= nextStop.time.addingTimeInterval(-20) {
+            station = STATIONS[idx2]
+        } else {
+            let dt = nextStop.time.timeIntervalSince(prevStop.time)
+            let mix = dt == 0 ? 0.0 : now.timeIntervalSince(prevStop.time) / dt
+
+            let offset = Int(floor(min(1, max(0, mix)) * Double(idx2 - idx1)))
+            station = STATIONS[idx1 + offset]
+        }
+
+        return station?.side(direction: direction)
     }
 }

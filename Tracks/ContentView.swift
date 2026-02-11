@@ -23,15 +23,7 @@ struct ContentView: View {
         Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        let serviceTrains =
-            self.trains?.filter { train in
-                guard let service = self.service, let today = self.today else {
-                    return false
-                }
-
-                return train.service == service || (train.service == "normal" && service == today)
-            }
-
+        let serviceTrains = self.serviceTrains()
         let altService = self.service != nil && self.service! != self.today!
 
         TabView {
@@ -101,11 +93,14 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            self.fetchStations()
+            self.loadStations()
             self.fetch()
         }
         .refreshable {
             self.fetch()
+        }
+        .onChange(of: service) {
+            self.loadStations()
         }
         .onReceive(self.fetchTimer) { _ in
             // every 90 seconds
@@ -123,6 +118,16 @@ struct ContentView: View {
                 self.fetch(full: true)
                 self.lastUpdate = now
             }
+        }
+    }
+
+    func serviceTrains() -> [Train]? {
+        return self.trains?.filter { train in
+            guard let service = self.service, let today = self.today else {
+                return false
+            }
+
+            return train.service == service || (train.service == "normal" && service == today)
         }
     }
 
@@ -162,7 +167,7 @@ struct ContentView: View {
             var request = URLRequest(url: url)
 
             if req.auth {
-                request.setValue("AUTH", forHTTPHeaderField: "Authorization")
+                request.setValue("6a4668bc-cfe0-4647-9a2f-56b5e5ae3cc6", forHTTPHeaderField: "Authorization")
             }
 
             URLSession.shared.dataTask(with: request) { data, _, _ in
@@ -176,12 +181,20 @@ struct ContentView: View {
 
         group.notify(queue: .main) {
             if self.holidays == nil {
-                let html = String(decoding: res["holidays"]!, as: UTF8.self)
-                self.holidays = Holidays(html: html)
+                if let holidays = res["holidays"] {
+                    let html = String(decoding: holidays, as: UTF8.self)
+                    self.holidays = Holidays(html: html)
+                } else {
+                    return
+                }
             }
             if self.scheduled == nil || fullFetch {
-                let html = String(decoding: res["scheduled"]!, as: UTF8.self)
-                self.scheduled = Scheduled(html: html, holidays: self.holidays!)
+                if let scheduled = res["scheduled"] {
+                    let html = String(decoding: scheduled, as: UTF8.self)
+                    self.scheduled = Scheduled(html: html, holidays: self.holidays!)
+                } else {
+                    return
+                }
             }
 
             self.today = self.holidays!.service()
@@ -192,12 +205,12 @@ struct ContentView: View {
             self.trains = self.scheduled!.fetch()
 
             if let live = res["live"] {
-                loadLive(data: live)
+                self.loadLive(data: live)
             }
-            fetchStations()
+            self.loadStations()
 
             if let alerts = res["alerts"] {
-                loadAlerts(data: alerts)
+                self.loadAlerts(data: alerts)
             }
         }
     }
@@ -210,24 +223,15 @@ struct ContentView: View {
             let data = try decoder.decode([Train].self, from: data)
             let trainIDs = data.map { $0.id }
 
-            self.trains = self.trains!.filter { train in
-                trainIDs.first { train.id == $0 } == nil
-            } + data
+            self.trains = data + self.trains!.filter { train in
+                !trainIDs.contains(where: { train.id == $0 })
+            }
         } catch {}
     }
 
-    func fetchStations() {
-        if let url = Bundle.main.url(forResource: "stations", withExtension: "json") {
-            do {
-                let json = try Data(contentsOf: url)
-                let decoder = JSONDecoder()
-
-                let data = try decoder.decode([StationInfo].self, from: json)
-                let stations = Stations(stations: data)
-
-                self.stations = stations.loadStations(trains: self.trains ?? [])
-            } catch {}
-        }
+    func loadStations() {
+        let stations = Stations(stations: STATIONS)
+        self.stations = stations.loadStations(trains: self.serviceTrains() ?? [])
     }
 
     func loadAlerts(data: Data) {

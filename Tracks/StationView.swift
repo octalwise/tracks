@@ -119,7 +119,7 @@ struct StationView: View {
             value: self.tick.hashValue ^ self.showPast.hashValue
         )
         .onAppear { autoPast() }
-        .onReceive(refresh) { self.tick = $0 }
+        .onReceive(self.refresh) { self.tick = $0 }
     }
 
     func autoPast() {
