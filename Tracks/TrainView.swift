@@ -111,7 +111,7 @@ struct TrainView: View {
                 self.showPast = true
             }
         }
-        .onReceive(refresh) { self.tick = $0 }
+        .onReceive(self.refresh) { self.tick = $0 }
     }
 
     func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {

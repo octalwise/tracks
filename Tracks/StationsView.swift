@@ -102,7 +102,7 @@ struct StationsView: View {
             .easeInOut(duration: 0.3),
             value: self.trains.hashValue ^ self.stations.hashValue
         )
-        .onReceive(refresh) { self.tick = $0 }
+        .onReceive(self.refresh) { self.tick = $0 }
     }
 
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {
