@@ -11,8 +11,7 @@ struct StationView: View {
 
     @State var direction = "N"
 
-    @State var showPast = false
-    @State var setPast = true
+    @State var pastOverride: Bool? = nil
 
     @State var tick = Date()
     let refresh =
@@ -21,15 +20,16 @@ struct StationView: View {
     var body: some View {
         let _ = tick
 
-        let stopTrains = self.stopTrains().filter { self.showPast || !$0.past }
+        let showPast = pastOverride ?? !stopTrains().contains(where: { !$0.past })
+
+        let stopTrains = stopTrains().filter { showPast || !$0.past }
 
         ScrollView {
             // select direction
-            Picker("Direction", selection: self.$direction) {
+            Picker("Direction", selection: $direction) {
                 Text("Northbound").tag("N")
                 Text("Southbound").tag("S")
             }
-            .onChange(of: self.direction) { val in autoPast() }
             .pickerStyle(.segmented)
             .padding(.top, 15)
             .padding([.leading, .trailing], 20)
@@ -38,11 +38,8 @@ struct StationView: View {
                 Toggle(
                     "Show Past Trains",
                     isOn: Binding(
-                        get: { self.showPast },
-                        set: { val in
-                            self.showPast = val
-                            self.setPast = false
-                        }
+                        get: { showPast },
+                        set: { pastOverride = $0 }
                     )
                 ).toggleStyle(CheckboxStyle())
 
@@ -68,9 +65,9 @@ struct StationView: View {
                         NavigationLink {
                             TrainView(
                                 train: train,
-                                trains: self.trains,
-                                stations: self.stations,
-                                altService: self.altService
+                                trains: trains,
+                                stations: stations,
+                                altService: altService
                             )
                         } label: {
                             HStack {
@@ -98,7 +95,7 @@ struct StationView: View {
                         }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
-                    .opacity(past || self.altService ? 0.6 : 1.0)
+                    .opacity(past || altService ? 0.6 : 1.0)
                     .transition(
                         .asymmetric(
                             insertion: .opacity.animation(.easeOut(duration: 0.5)),
@@ -113,23 +110,16 @@ struct StationView: View {
                 }
             }.padding(.bottom, 15)
         }
-        .navigationTitle(self.station.name)
+        .navigationTitle(station.name)
         .animation(
             .easeInOut(duration: 0.3),
-            value: self.tick.hashValue ^ self.showPast.hashValue
+            value: tick.hashValue ^ showPast.hashValue
         )
-        .onAppear { autoPast() }
-        .onReceive(self.refresh) { self.tick = $0 }
-    }
-
-    func autoPast() {
-        if self.setPast {
-            self.showPast = !self.stopTrains().contains(where: { !$0.past })
-        }
+        .onReceive(refresh) { tick = $0 }
     }
 
     func stopTrains() -> [(train: Train, stop: Stop, delay: Double, past: Bool)] {
-        self.trains
+        trains
             .map { train in
                 (
                     // train
@@ -137,7 +127,7 @@ struct StationView: View {
 
                     // train stop in station
                     stop: train.stops.first {
-                        self.station.contains(id: $0.station)
+                        station.contains(id: $0.station)
                     }
                 )
             }

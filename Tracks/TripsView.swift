@@ -13,8 +13,7 @@ struct TripsView: View {
     @AppStorage("from") var fromID = -1
     @AppStorage("to") var toID = -1
 
-    @State var showPast = false
-    @State var setPast = false
+    @State var pastOverride: Bool? = nil
 
     @State var tick = Date()
     let refresh =
@@ -23,21 +22,23 @@ struct TripsView: View {
     var body: some View {
         let _ = tick
 
-        let trainsStops = self.trainsStops().filter { self.showPast || !$0.past }
+        let showPast = pastOverride ?? !trainsStops().contains(where: { !$0.past })
+
+        let trainsStops = trainsStops().filter { showPast || !$0.past }
 
         VStack {
             HStack {
                 // from station
                 Menu {
-                    Picker("From", selection: self.$from) {
-                        ForEach(self.stations, id: \.self) { station in
+                    Picker("From", selection: $from) {
+                        ForEach(stations, id: \.self) { station in
                             Text(station.name)
                                 .frame(maxWidth: .infinity)
                         }
                     }
                 } label: {
                     HStack {
-                        Text(self.from.name)
+                        Text(from.name)
                             .lineLimit(1)
                             .padding(.trailing, -3)
 
@@ -57,7 +58,7 @@ struct TripsView: View {
                 // flip route
                 Button(action: {
                     withAnimation(.none) {
-                        (self.from, self.to) = (self.to, self.from)
+                        (from, to) = (to, from)
                     }
                 }) {
                     Image(systemName: "arrow.right.arrow.left")
@@ -66,15 +67,15 @@ struct TripsView: View {
 
                 // to station
                 Menu {
-                    Picker("To", selection: self.$to) {
-                        ForEach(self.stations, id: \.self) { station in
+                    Picker("To", selection: $to) {
+                        ForEach(stations, id: \.self) { station in
                             Text(station.name)
                                 .frame(maxWidth: .infinity)
                         }
                     }
                 } label: {
                     HStack {
-                        Text(self.to.name)
+                        Text(to.name)
                             .lineLimit(1)
                             .padding(.trailing, -3)
 
@@ -91,24 +92,22 @@ struct TripsView: View {
                     )
                 }
             }
-            .onChange(of: self.from) { val in
-                self.fromID = val.north.id
-                autoPast()
+            .onChange(of: from) { val in
+                fromID = val.north.id
             }
-            .onChange(of: self.to) { val in
-                self.toID = val.north.id
-                autoPast()
+            .onChange(of: to) { val in
+                toID = val.north.id
             }
             .onAppear {
-                if self.fromID != -1 {
-                    self.from = self.stations.first {
-                        $0.contains(id: self.fromID)
+                if fromID != -1 {
+                    from = stations.first {
+                        $0.contains(id: fromID)
                     }!
                 }
 
-                if self.toID != -1 {
-                    self.to = self.stations.first {
-                        $0.contains(id: self.toID)
+                if toID != -1 {
+                    to = stations.first {
+                        $0.contains(id: toID)
                     }!
                 }
             }
@@ -120,11 +119,8 @@ struct TripsView: View {
                 Toggle(
                     "Show Past Trains",
                     isOn: Binding(
-                        get: { self.showPast },
-                        set: { val in
-                            self.showPast = val
-                            self.setPast = false
-                        }
+                        get: { showPast },
+                        set: { val in pastOverride = val }
                     )
                 ).toggleStyle(CheckboxStyle())
 
@@ -150,9 +146,9 @@ struct TripsView: View {
                         NavigationLink {
                             TrainView(
                                 train: train,
-                                trains: self.trains,
-                                stations: self.stations,
-                                altService: self.altService
+                                trains: trains,
+                                stations: stations,
+                                altService: altService
                             )
                         } label: {
                             HStack {
@@ -174,7 +170,7 @@ struct TripsView: View {
                             .gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
-                    .opacity(past || self.altService ? 0.6 : 1.0)
+                    .opacity(past || altService ? 0.6 : 1.0)
                     .transition(
                         .asymmetric(
                             insertion: .opacity.animation(.easeOut(duration: 0.5)),
@@ -191,30 +187,23 @@ struct TripsView: View {
         }
         .animation(
             .easeInOut(duration: 0.3),
-            value: self.tick.hashValue ^ self.showPast.hashValue
+            value: tick.hashValue ^ showPast.hashValue
         )
-        .onAppear { autoPast() }
-        .onReceive(self.refresh) { self.tick = $0 }
-    }
-
-    func autoPast() {
-        if self.setPast {
-            self.showPast = !self.trainsStops().contains(where: { !$0.past })
-        }
+        .onReceive(refresh) { tick = $0 }
     }
 
     func trainsStops() -> [(train: Train, from: Stop, to: Stop, past: Bool)] {
-        self.trains
+        trains
             .map { train in
                 (
                     // train
                     train: train,
 
                     // stop at from station
-                    from: train.stops.first { self.from.contains(id: $0.station) },
+                    from: train.stops.first { from.contains(id: $0.station) },
 
                     // stop at to station
-                    to: train.stops.first { self.to.contains(id: $0.station) }
+                    to: train.stops.first { to.contains(id: $0.station) }
                 )
             }
             .filter { (train: Train, from: Stop?, to: Stop?) in

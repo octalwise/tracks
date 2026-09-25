@@ -11,7 +11,7 @@ struct Stations {
     let stations: [StationInfo]
 
     func loadStations(trains: [Train]) -> [BothStations] {
-        self.stations.map { station in
+        stations.map { station in
             BothStations(
                 name: station.name,
                 north: Station(
@@ -33,11 +33,11 @@ struct StationInfo: Decodable {
     let south: Int
 
     func contains(id: Int) -> Bool {
-        id == self.north || id == self.south
+        id == north || id == south
     }
 
     func side(direction: String) -> Int {
-        direction == "N" ? self.north : self.south
+        direction == "N" ? north : south
     }
 }
 
@@ -47,7 +47,7 @@ struct BothStations: Codable, Hashable {
     let south: Station
 
     func contains(id: Int) -> Bool {
-        id == self.north.id || id == self.south.id
+        id == north.id || id == south.id
     }
 }
 

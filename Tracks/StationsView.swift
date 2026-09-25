@@ -14,7 +14,7 @@ struct StationsView: View {
     var body: some View {
         let _ = tick
 
-        let stationTrains = self.stationTrains()
+        let stationTrains = stationTrains()
 
         Grid {
             ForEach(
@@ -29,9 +29,9 @@ struct StationsView: View {
                         NavigationLink {
                             TrainView(
                                 train: south!,
-                                trains: self.trains,
-                                stations: self.stations,
-                                altService: self.altService
+                                trains: trains,
+                                stations: stations,
+                                altService: altService
                             )
                         } label: {
                             Image(systemName: "tram.fill")
@@ -54,9 +54,9 @@ struct StationsView: View {
                     NavigationLink {
                         StationView(
                             station: station,
-                            trains: self.trains,
-                            stations: self.stations,
-                            altService: self.altService
+                            trains: trains,
+                            stations: stations,
+                            altService: altService
                         )
                     } label: {
                         Text(station.name).lineLimit(1)
@@ -69,9 +69,9 @@ struct StationsView: View {
                         NavigationLink {
                             TrainView(
                                 train: north!,
-                                trains: self.trains,
-                                stations: self.stations,
-                                altService: self.altService
+                                trains: trains,
+                                stations: stations,
+                                altService: altService
                             )
                         } label: {
                             Image(systemName: "tram.fill")
@@ -81,7 +81,7 @@ struct StationsView: View {
                         }
                         .applyButtonStyle(color: north!.routeColor())
                         .gridColumnAlignment(.leading)
-                        .opacity(self.altService ? 0.4 : 1.0)
+                        .opacity(altService ? 0.4 : 1.0)
                         .frame(width: 22, height: 22)
                     } else {
                         Image(systemName: "chevron.up")
@@ -100,13 +100,13 @@ struct StationsView: View {
         .padding([.top, .bottom], 15)
         .animation(
             .easeInOut(duration: 0.3),
-            value: self.trains.hashValue ^ self.stations.hashValue
+            value: trains.hashValue ^ stations.hashValue
         )
-        .onReceive(self.refresh) { self.tick = $0 }
+        .onReceive(refresh) { tick = $0 }
     }
 
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {
-        self.stations
+        stations
             .map { station in
                 (
                     station: station,

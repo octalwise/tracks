@@ -19,19 +19,19 @@ struct TrainView: View {
         let _ = tick
 
         let stopStations =
-            self.stopStations().filter { self.showPast || !$0.past }
+            stopStations().filter { showPast || !$0.past }
 
         ScrollView {
             HStack {
                 // toggle past stops
-                Toggle(isOn: self.$showPast) {
+                Toggle(isOn: $showPast) {
                     Text("Show Past Stops")
                 }.toggleStyle(CheckboxStyle())
 
                 Spacer()
 
-                Text(self.train.route)
-                    .foregroundStyle(self.train.routeColor())
+                Text(train.route)
+                    .foregroundStyle(train.routeColor())
                     .padding(.leading, 15)
                     .lineLimit(1)
             }
@@ -56,9 +56,9 @@ struct TrainView: View {
                             NavigationLink {
                                 StationView(
                                     station: station,
-                                    trains: self.trains,
-                                    stations: self.stations,
-                                    altService: self.altService
+                                    trains: trains,
+                                    stations: stations,
+                                    altService: altService
                                 )
                             } label: {
                                 Text(station.name).lineLimit(1)
@@ -84,7 +84,7 @@ struct TrainView: View {
                         }.gridColumnAlignment(.trailing)
                     }
                     .padding([.leading, .trailing], 20)
-                    .opacity(past || self.altService ? 0.6 : 1.0)
+                    .opacity(past || altService ? 0.6 : 1.0)
                     .transition(
                         .asymmetric(
                             insertion: .opacity.animation(.easeOut(duration: 0.5)),
@@ -100,22 +100,22 @@ struct TrainView: View {
             }.padding(.bottom, 15)
         }
         .navigationTitle(
-            "Train \(self.train.id)\(!self.train.live ? "*" : "")"
+            "Train \(train.id)\(!train.live ? "*" : "")"
         )
         .animation(
             .easeInOut(duration: 0.3),
-            value: self.tick.hashValue ^ self.showPast.hashValue
+            value: tick.hashValue ^ showPast.hashValue
         )
         .onAppear {
             if stopStations.count == 0 {
-                self.showPast = true
+                showPast = true
             }
         }
-        .onReceive(self.refresh) { self.tick = $0 }
+        .onReceive(refresh) { tick = $0 }
     }
 
     func stopStations() -> [(stop: Stop, station: BothStations, delay: Double, past: Bool)] {
-        self.train
+        train
             .stops
             .sorted {
                 $0.expected < $1.expected

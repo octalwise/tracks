@@ -1,6 +1,14 @@
 import Foundation
 import SwiftUI
 
+let laTz = TimeZone(identifier: "America/Los_Angeles")!
+
+let laCalendar: Calendar = {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = laTz
+    return cal
+}()
+
 struct Train: Codable, Hashable {
     let id: Int
     let live: Bool
@@ -13,7 +21,7 @@ struct Train: Codable, Hashable {
     let stops: [Stop]
 
     func routeColor() -> Color {
-        switch self.route {
+        switch route {
         case "Local":
             return .gray
 
@@ -50,7 +58,7 @@ extension View {
         if #available(iOS 26.0, *) {
             self
         } else {
-            self.foregroundStyle(color)
+            foregroundStyle(color)
         }
     }
 
@@ -76,14 +84,15 @@ extension Date {
             locale: .current
         )?.contains("H") ?? false
 
-        let base = Date.FormatStyle().minute(.twoDigits)
+        var base = Date.FormatStyle().minute(.twoDigits)
+        base.timeZone = laTz
 
         let format =
             is24h
                 ? base.hour(.twoDigits(amPM: .omitted))
                 : base.hour(.defaultDigits(amPM: .abbreviated))
 
-        return self.formatted(format)
+        return formatted(format)
     }
 }
 

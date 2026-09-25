@@ -23,17 +23,17 @@ struct ContentView: View {
         Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        let serviceTrains = self.serviceTrains()
-        let altService = self.service != nil && self.service! != self.today!
+        let serviceTrains = serviceTrains()
+        let altService = service != nil && service! != today!
 
         TabView {
             // all stations view
-            NavigationStack {
+            NavigationSplitView {
                 ScrollView {
-                    if self.stations != nil {
+                    if stations != nil {
                         StationsView(
                             trains: serviceTrains ?? [],
-                            stations: self.stations!,
+                            stations: stations!,
                             altService: altService
                         )
                         .toolbar {
@@ -42,23 +42,29 @@ struct ContentView: View {
                             }
                         }
                     }
-                }.navigationTitle("Stations")
+                }
+                .navigationTitle("Stations")
+                .navigationSplitViewColumnWidth(ideal: 400)
+            } detail: {
+                NavigationStack {
+                    ContentUnavailableView("Select a station or train", systemImage: "tram")
+                }
             }
             .tabItem {
                 Label("Stations", systemImage: "house.fill")
             }
 
             // trips view
-            NavigationStack {
+            NavigationSplitView {
                 ScrollView {
-                    if self.stations != nil && serviceTrains != nil {
+                    if stations != nil && serviceTrains != nil {
                         TripsView(
-                            stations: self.stations!,
+                            stations: stations!,
                             trains: serviceTrains!,
                             altService: altService,
 
-                            from: self.stations!.first { $0.name == "Palo Alto" }!,
-                            to: self.stations!.first { $0.name == "San Mateo" }!
+                            from: stations!.first { $0.name == "Palo Alto" }!,
+                            to: stations!.first { $0.name == "San Mateo" }!
                         )
                         .toolbar {
                             if service != nil {
@@ -70,7 +76,13 @@ struct ContentView: View {
                             Text("Loading Trains")
                         }.padding(15)
                     }
-                }.navigationTitle("Trips")
+                }
+                .navigationTitle("Trips")
+                .navigationSplitViewColumnWidth(ideal: 400)
+            } detail: {
+                NavigationStack {
+                    ContentUnavailableView("Select a train", systemImage: "tram")
+                }
             }
             .tabItem {
                 Label("Trips", systemImage: "map.fill")
@@ -79,8 +91,8 @@ struct ContentView: View {
             // alerts view
             NavigationStack {
                 ScrollView {
-                    if self.alerts != nil {
-                        AlertsView(alerts: self.alerts!)
+                    if alerts != nil {
+                        AlertsView(alerts: alerts!)
                     } else {
                         ProgressView() {
                             Text("Loading Alerts")
@@ -93,37 +105,38 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            self.loadStations()
-            self.fetch()
+            loadStations()
+            fetch()
+            if laCalendar.component(.hour, from: Date()) >= 3 {
+                lastUpdate = Date()
+            }
         }
         .refreshable {
-            self.fetch()
+            fetch()
         }
         .onChange(of: service) {
-            self.loadStations()
+            loadStations()
         }
-        .onReceive(self.fetchTimer) { _ in
+        .onReceive(fetchTimer) { _ in
             // every 90 seconds
-            self.fetch()
+            fetch()
         }
-        .onReceive(self.scheduledTimer) { now in
-            if let last = self.lastUpdate, Calendar.current.isDate(now, inSameDayAs: last) {
+        .onReceive(scheduledTimer) { now in
+            if let last = lastUpdate, laCalendar.isDate(now, inSameDayAs: last) {
                 return
             }
 
-            let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
-
             // every 3am
-            if comps.hour! >= 3 {
-                self.fetch(full: true)
-                self.lastUpdate = now
+            if laCalendar.component(.hour, from: now) >= 3 {
+                fetch(full: true)
+                lastUpdate = now
             }
         }
     }
 
     func serviceTrains() -> [Train]? {
-        return self.trains?.filter { train in
-            guard let service = self.service, let today = self.today else {
+        return trains?.filter { train in
+            guard let service = service, let today = today else {
                 return false
             }
 
@@ -134,12 +147,12 @@ struct ContentView: View {
     func serviceButton() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Menu {
-                Picker("Service", selection: self.$service) {
+                Picker("Service", selection: $service) {
                     Label("Weekday", systemImage: "calendar").tag("weekday")
                     Label("Weekend", systemImage: "clock").tag("weekend")
                 }
             } label: {
-                Image(systemName: self.service == "weekday" ? "calendar" : "clock")
+                Image(systemName: service == "weekday" ? "calendar" : "clock")
             }
         }
     }
@@ -150,10 +163,10 @@ struct ContentView: View {
             "alerts": (url: "https://tracks-api.octalwise.com/alerts", auth: true)
         ]
 
-        if self.holidays == nil {
+        if holidays == nil {
             urls["holidays"] = (url: "https://www.caltrain.com/schedules/holiday-service-schedules", auth: false)
         }
-        if self.scheduled == nil || fullFetch {
+        if scheduled == nil || fullFetch {
             urls["scheduled"] = (url: "https://www.caltrain.com", auth: false)
         }
 
@@ -180,37 +193,38 @@ struct ContentView: View {
         }
 
         group.notify(queue: .main) {
-            if self.holidays == nil {
-                if let holidays = res["holidays"] {
-                    let html = String(decoding: holidays, as: UTF8.self)
-                    self.holidays = Holidays(html: html)
+            if holidays == nil {
+                if let data = res["holidays"] {
+                    let html = String(decoding: data, as: UTF8.self)
+                    holidays = Holidays(html: html)
                 } else {
                     return
                 }
             }
-            if self.scheduled == nil || fullFetch {
-                if let scheduled = res["scheduled"] {
-                    let html = String(decoding: scheduled, as: UTF8.self)
-                    self.scheduled = Scheduled(html: html, holidays: self.holidays!)
+            if scheduled == nil || fullFetch {
+                if let data = res["scheduled"] {
+                    let html = String(decoding: data, as: UTF8.self)
+                    scheduled = Scheduled(html: html, holidays: holidays!)
                 } else {
                     return
                 }
             }
 
-            self.today = self.holidays!.service()
-            if self.service == nil || fullFetch {
-                self.service = self.today
+            let newToday = holidays!.service()
+            if service == nil || fullFetch || newToday != today {
+                service = newToday
             }
+            today = newToday
 
-            self.trains = self.scheduled!.fetch()
+            trains = scheduled!.fetch()
 
             if let live = res["live"] {
-                self.loadLive(data: live)
+                loadLive(data: live)
             }
-            self.loadStations()
+            loadStations()
 
             if let alerts = res["alerts"] {
-                self.loadAlerts(data: alerts)
+                loadAlerts(data: alerts)
             }
         }
     }
@@ -223,15 +237,14 @@ struct ContentView: View {
             let data = try decoder.decode([Train].self, from: data)
             let trainIDs = data.map { $0.id }
 
-            self.trains = data + self.trains!.filter { train in
+            trains = data + trains!.filter { train in
                 !trainIDs.contains(where: { train.id == $0 })
             }
         } catch {}
     }
 
     func loadStations() {
-        let stations = Stations(stations: STATIONS)
-        self.stations = stations.loadStations(trains: self.serviceTrains() ?? [])
+        stations = Stations(stations: STATIONS).loadStations(trains: serviceTrains() ?? [])
     }
 
     func loadAlerts(data: Data) {
@@ -240,7 +253,7 @@ struct ContentView: View {
 
         do {
             let data = try decoder.decode([Alert].self, from: data)
-            self.alerts = data
+            alerts = data
         } catch {}
     }
 }
