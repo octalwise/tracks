@@ -117,7 +117,7 @@ struct Scheduled {
                     .filter { $0.train == train.id }
                     .sorted { $0.time < $1.time }
 
-            let location = getLocation(direction: train.direction, stops: trainStops)
+            let (location, offset) = getLocation(direction: train.direction, stops: trainStops)
 
             return Train(
                 id: train.id,
@@ -126,6 +126,7 @@ struct Scheduled {
                 route: train.route,
                 service: train.service,
                 location: location,
+                offset: offset,
                 stops: trainStops.map {
                     Stop(
                         station: $0.station,
@@ -137,15 +138,11 @@ struct Scheduled {
         }
     }
 
-    func getLocation(direction: String, stops: [ScheduledStop]) -> Int? {
+    func getLocation(direction: String, stops: [ScheduledStop]) -> (location: Int?, offset: Bool) {
         let now = Date()
 
-        let times = stops.map { $0.time }
-        let first = times.first!
-        let last = times.last!
-
-        if first > now || last <= now {
-            return nil;
+        if stops.first!.time > now || stops.last!.time <= now {
+            return (location: nil, offset: false)
         }
 
         let nextIdx = stops.firstIndex { $0.time > now }!
@@ -159,15 +156,15 @@ struct Scheduled {
         let station: StationInfo
 
         if idx1 == idx2 || now >= nextStop.time.addingTimeInterval(-20) {
-            station = STATIONS[idx2]
+            return (location: STATIONS[idx2].side(direction: direction), offset: false)
         } else {
             let dt = nextStop.time.timeIntervalSince(prevStop.time)
             let mix = min(1, max(0, now.timeIntervalSince(prevStop.time) / dt))
 
-            let offset = Int(trunc(mix * Double(idx2 - idx1)))
-            station = STATIONS[idx1 + offset]
-        }
+            let offset = mix * Double(idx2 - idx1)
+            let frac = offset - trunc(offset)
 
-        return station.side(direction: direction)
+            return (location: STATIONS[idx1 + Int(offset)].side(direction: direction), offset: abs(frac) > 0.25)
+        }
     }
 }

@@ -14,9 +14,9 @@ struct ContentView: View {
     @State var today: String?
     @State var service: String?
 
-    // every 90 seconds
+    // every 30 seconds
     let fetchTimer =
-        Timer.publish(every: 90, on: .main, in: .common).autoconnect()
+        Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
     // every 3am
     let scheduledTimer =
@@ -118,7 +118,7 @@ struct ContentView: View {
             loadStations()
         }
         .onReceive(fetchTimer) { _ in
-            // every 90 seconds
+            // every 30 seconds
             fetch()
         }
         .onReceive(scheduledTimer) { now in

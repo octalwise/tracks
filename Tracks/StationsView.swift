@@ -9,7 +9,7 @@ struct StationsView: View {
 
     @State var tick = Date()
     let refresh =
-        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+        Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     var body: some View {
         let _ = tick
@@ -24,28 +24,30 @@ struct StationsView: View {
                 let (station, south, north) = data
 
                 HStack {
-                    if south != nil {
-                        // southbound train
-                        NavigationLink {
-                            TrainView(
-                                train: south!,
-                                trains: trains,
-                                stations: stations,
-                                altService: altService
-                            )
-                        } label: {
-                            Image(systemName: "tram.fill")
-                                .applyForeground(color: south!.routeColor())
-                                .frame(height: 22)
-                        }
-                        .applyButtonStyle(color: south!.routeColor())
-                        .gridColumnAlignment(.leading)
-                        .opacity(altService ? 0.4 : 1.0)
-                        .frame(width: 22, height: 22)
-                    } else {
+                    ZStack {
                         Image(systemName: "chevron.down")
-                            .gridColumnAlignment(.leading)
                             .frame(width: 22, height: 22)
+
+                        if south != nil {
+                            // southbound train
+                            NavigationLink {
+                                TrainView(
+                                    train: south!,
+                                    trains: trains,
+                                    stations: stations,
+                                    altService: altService
+                                )
+                            } label: {
+                                Image(systemName: "tram.fill")
+                                    .applyForeground(color: south!.routeColor())
+                                    .frame(height: 22)
+                                    .transition(.opacity)
+                            }
+                            .applyButtonStyle(color: south!.routeColor())
+                            .opacity(altService ? 0.4 : 1.0)
+                            .frame(width: 22, height: 22)
+                            .offset(y: south!.offset ? 20 : 0)
+                        }
                     }
 
                     Spacer()
@@ -64,34 +66,35 @@ struct StationsView: View {
 
                     Spacer()
 
-                    if north != nil {
-                        // northbound train
-                        NavigationLink {
-                            TrainView(
-                                train: north!,
-                                trains: trains,
-                                stations: stations,
-                                altService: altService
-                            )
-                        } label: {
-                            Image(systemName: "tram.fill")
-                                .applyForeground(color: north!.routeColor())
-                                .frame(height: 22)
-                                .transition(.opacity)
-                        }
-                        .applyButtonStyle(color: north!.routeColor())
-                        .gridColumnAlignment(.leading)
-                        .opacity(altService ? 0.4 : 1.0)
-                        .frame(width: 22, height: 22)
-                    } else {
+                    ZStack {
                         Image(systemName: "chevron.up")
-                            .gridColumnAlignment(.leading)
                             .frame(width: 22, height: 22)
-                            .transition(.opacity)
+
+                        if north != nil {
+                            // northbound train
+                            NavigationLink {
+                                TrainView(
+                                    train: north!,
+                                    trains: trains,
+                                    stations: stations,
+                                    altService: altService
+                                )
+                            } label: {
+                                Image(systemName: "tram.fill")
+                                    .applyForeground(color: north!.routeColor())
+                                    .frame(height: 22)
+                                    .transition(.opacity)
+                            }
+                            .applyButtonStyle(color: north!.routeColor())
+                            .opacity(altService ? 0.4 : 1.0)
+                            .frame(width: 22, height: 22)
+                            .offset(y: north!.offset ? -20 : 0)
+                        }
                     }
                 }
                 .padding([.leading, .trailing], 40)
                 .padding(.bottom, 10)
+                .zIndex(south?.offset == true || north?.offset == true ? 1 : 0)
             }
 
             // expand grid width
