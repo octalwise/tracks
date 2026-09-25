@@ -7,7 +7,7 @@ struct AlertsView: View {
     var body: some View {
         VStack {
             ForEach(
-                Array(self.alerts.enumerated()),
+                Array(alerts.enumerated()),
                 id: \.1.self
             ) { index, alert in
                 if index > 0 {
@@ -21,46 +21,36 @@ struct AlertsView: View {
         }
         .padding(.top, 10)
         .padding(.bottom, 15)
-        .animation(.easeInOut(duration: 0.3), value: self.alerts)
+        .animation(.easeInOut(duration: 0.3), value: alerts)
     }
 }
 
 struct AlertItem: View {
     let alert: Alert
 
-    @State var expanded = false
-
     var body: some View {
-        VStack {
-            Button(action: {
-                withAnimation(.none) {
-                    expanded = !expanded
-                }
-            }) {
-                // header
-                Text(self.alert.header)
-                    .lineLimit(expanded ? nil : 1)
-                    .multilineTextAlignment(.leading)
+        HStack {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundColor(.red)
+                .padding(.trailing, 3)
 
-                Spacer()
-
-                VStack {
-                    Image(systemName:  "chevron.right")
-                        .rotationEffect(.degrees(expanded ? 90 : 0))
-                        .animation(.linear(duration: 0.25), value: expanded)
-                        .offset(y: 4)
-
-                    Spacer()
-                }
-            }
-
-            if self.alert.description != nil && !self.alert.description!.isEmpty && expanded {
-                // description
+            VStack {
                 HStack {
-                    Text(self.alert.description!)
+                    // header
+                    Text(alert.header)
                         .multilineTextAlignment(.leading)
 
                     Spacer()
+                }
+
+                if alert.description != nil && !alert.description!.isEmpty {
+                    HStack {
+                        // description
+                        Text(alert.description!)
+                            .multilineTextAlignment(.leading)
+
+                            Spacer()
+                    }
                 }
             }
         }.padding([.top, .bottom], 5)

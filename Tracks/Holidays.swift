@@ -5,10 +5,15 @@ struct Holidays {
     var holidays: [(day: Int, month: Int)]
 
     init(html: String) {
-        self.holidays = []
+        holidays = []
 
         do {
             let doc = try SwiftSoup.parse(html)
+
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeZone = laTz
+            formatter.dateFormat = "MMMM d"
 
             for row in try doc.select("table.holiday-service-schedule tbody tr") {
                 let vals = try row.select("td")
@@ -17,33 +22,27 @@ struct Holidays {
                     continue
                 }
 
-                let formatter = DateFormatter()
-
-                formatter.dateFormat = "MMMM d"
-                formatter.timeZone = TimeZone(abbreviation: "PST")
-
                 guard let time = formatter.date(from: try vals.get(1).text()) else {
                     throw FormatError.formatError("Invalid time format in Caltrain data.")
                 }
 
-                let comps = Calendar.current.dateComponents([.day, .month], from: time)
-
-                self.holidays.append((day: comps.day!, month: comps.month!))
+                let comps = laCalendar.dateComponents([.day, .month], from: time)
+                holidays.append((day: comps.day!, month: comps.month!))
             }
         } catch {
-            self.holidays = []
+            holidays = []
         }
     }
 
     func isHoliday(_ date: Date) -> Bool {
-        let comps = Calendar.current.dateComponents([.day, .month], from: date)
-        return self.holidays.contains { $0.day == comps.day! && $0.month == comps.month! }
+        let comps = laCalendar.dateComponents([.day, .month], from: date)
+        return holidays.contains { $0.day == comps.day! && $0.month == comps.month! }
     }
 
     func service() -> String {
-        let shifted = Calendar.current.date(byAdding: .hour, value: -3, to: Date())!
+        let shifted = laCalendar.date(byAdding: .hour, value: -3, to: Date())!
+        let isWeekend = laCalendar.isDateInWeekend(shifted)
 
-        let isWeekend = Calendar.current.isDateInWeekend(shifted)
-        return (isWeekend || self.isHoliday(shifted)) ? "weekend" : "weekday";
+        return (isWeekend || isHoliday(shifted)) ? "weekend" : "weekday";
     }
 }
