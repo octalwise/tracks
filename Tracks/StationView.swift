@@ -15,7 +15,7 @@ struct StationView: View {
 
     @State var tick = Date()
     let refresh =
-        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+        Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     var body: some View {
         let _ = tick

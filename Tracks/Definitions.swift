@@ -18,6 +18,8 @@ struct Train: Codable, Hashable {
     let service: String
 
     let location: Int?
+    let offset: Bool
+
     let stops: [Stop]
 
     func routeColor() -> Color {
