@@ -7,13 +7,7 @@ struct StationsView: View {
 
     let altService: Bool
 
-    @State var tick = Date()
-    let refresh =
-        Timer.publish(every: 10, on: .main, in: .common).autoconnect()
-
     var body: some View {
-        let _ = tick
-
         let stationTrains = stationTrains()
 
         Grid {
@@ -29,7 +23,6 @@ struct StationsView: View {
                             .frame(width: 22, height: 22)
 
                         if south != nil {
-                            // southbound train
                             NavigationLink {
                                 TrainView(
                                     train: south!,
@@ -51,7 +44,6 @@ struct StationsView: View {
 
                     Spacer()
 
-                    // station text
                     NavigationLink {
                         StationView(
                             station: station,
@@ -70,7 +62,6 @@ struct StationsView: View {
                             .frame(width: 22, height: 22)
 
                         if north != nil {
-                            // northbound train
                             NavigationLink {
                                 TrainView(
                                     train: north!,
@@ -95,15 +86,11 @@ struct StationsView: View {
                 .zIndex(south?.offset == true || north?.offset == true ? 1 : 0)
             }
 
-            // expand grid width
             Divider().opacity(0)
         }
         .padding([.top, .bottom], 15)
-        .animation(
-            .easeInOut(duration: 0.3),
-            value: trains.hashValue ^ stations.hashValue
-        )
-        .onReceive(refresh) { tick = $0 }
+        .animation(.easeInOut(duration: 0.3), value: trains)
+        .animation(.easeInOut(duration: 0.3), value: stations)
     }
 
     func stationTrains() -> [(station: BothStations, south: Train?, north: Train?)] {

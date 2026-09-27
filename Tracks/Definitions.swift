@@ -17,10 +17,54 @@ struct Train: Codable, Hashable {
     let route: String
     let service: String
 
-    let location: Int?
-    let offset: Bool
+    var location: Int?
+    var offset: Bool
 
     let stops: [Stop]
+
+    init(id: Int, live: Bool, direction: String, route: String, service: String, stops: [Stop]) {
+        self.id = id
+        self.live = live
+        self.direction = direction
+        self.route = route
+        self.service = service
+        self.stops = stops
+        self.location = nil
+        self.offset = false
+        refresh()
+    }
+
+    mutating func refresh() {
+        let now = Date()
+
+        if stops.first!.expected > now || stops.last!.expected <= now {
+            location = nil
+            offset = false
+            return
+        }
+
+        let nextIdx = stops.firstIndex { $0.expected > now }!
+
+        let nextStop = stops[nextIdx]
+        let prevStop = stops[nextIdx - 1]
+
+        let idx1 = STATIONS.firstIndex { $0.contains(id: prevStop.station) }!
+        let idx2 = STATIONS.firstIndex { $0.contains(id: nextStop.station) }!
+
+        if now >= nextStop.expected.addingTimeInterval(-20) {
+            location = STATIONS[idx2].side(direction: direction)
+            offset = false
+        } else {
+            let dt = nextStop.expected.timeIntervalSince(prevStop.expected)
+            let mix = min(1, max(0, now.timeIntervalSince(prevStop.expected) / dt))
+
+            let off = mix * Double(idx2 - idx1)
+            let frac = off - trunc(off)
+
+            location = STATIONS[idx1 + Int(off)].side(direction: direction)
+            offset = abs(frac) > 0.25
+        }
+    }
 
     func routeColor() -> Color {
         switch route {

@@ -14,20 +14,15 @@ struct ContentView: View {
     @State var today: String?
     @State var service: String?
 
-    // every 30 seconds
-    let fetchTimer =
-        Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-
-    // every 3am
-    let scheduledTimer =
-        Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    let refreshTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    let fetchTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    let scheduledTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
         let serviceTrains = serviceTrains()
         let altService = service != nil && service! != today!
 
         TabView {
-            // all stations view
             NavigationSplitView {
                 ScrollView {
                     if stations != nil {
@@ -54,7 +49,6 @@ struct ContentView: View {
                 Label("Stations", systemImage: "house.fill")
             }
 
-            // trips view
             NavigationSplitView {
                 ScrollView {
                     if stations != nil && serviceTrains != nil {
@@ -88,7 +82,6 @@ struct ContentView: View {
                 Label("Trips", systemImage: "map.fill")
             }
 
-            // alerts view
             NavigationStack {
                 ScrollView {
                     if alerts != nil {
@@ -117,8 +110,11 @@ struct ContentView: View {
         .onChange(of: service) {
             loadStations()
         }
+        .onReceive(refreshTimer) { _ in
+            trains = trains?.map { var t = $0; t.refresh(); return t }
+            loadStations()
+        }
         .onReceive(fetchTimer) { _ in
-            // every 30 seconds
             fetch()
         }
         .onReceive(scheduledTimer) { now in
@@ -126,7 +122,6 @@ struct ContentView: View {
                 return
             }
 
-            // every 3am
             if laCalendar.component(.hour, from: now) >= 3 {
                 fetch(full: true)
                 lastUpdate = now
@@ -173,6 +168,8 @@ struct ContentView: View {
         let group = DispatchGroup()
         var res: [String: Data] = [:]
 
+        let lock = NSLock()
+
         for (label, req) in urls {
             group.enter()
 
@@ -185,7 +182,9 @@ struct ContentView: View {
 
             URLSession.shared.dataTask(with: request) { data, _, _ in
                 if let data = data {
+                    lock.lock()
                     res[label] = data
+                    lock.unlock()
                 }
 
                 group.leave()
@@ -234,7 +233,7 @@ struct ContentView: View {
         decoder.dateDecodingStrategy = .secondsSince1970
 
         do {
-            let data = try decoder.decode([Train].self, from: data)
+            let data = (try decoder.decode([Train].self, from: data)).map { var t = $0; t.refresh(); return t }
             let trainIDs = data.map { $0.id }
 
             trains = data + trains!.filter { train in
