@@ -54,26 +54,31 @@ struct Alert: Codable, Hashable {
     let description: String?
 }
 
+func faded(_ color: Color) -> Color {
+    return color.mix(with: Color(.systemBackground), by: 0.6)
+}
+
 extension View {
     @ViewBuilder
-    func applyForeground(color: Color) -> some View {
+    func applyForeground(color: Color, fade: Bool) -> some View {
         if #available(iOS 26.0, *) {
-            self
+            foregroundStyle(fade ? faded(Color.primary) : Color.primary)
         } else {
-            foregroundStyle(color)
+            foregroundStyle(fade ? faded(color) : color)
         }
     }
 
     @ViewBuilder
-    func applyButtonStyle(color: Color) -> some View {
+    func applyButtonStyle(color: Color, fade: Bool) -> some View {
         if #available(iOS 26.0, *) {
             self
                 .buttonStyle(.glass)
-                .glassEffect(.regular.tint(color.opacity(0.3)))
+                .glassEffect(.regular.tint((fade ? faded(color) : color).opacity(0.3)))
         } else {
             self
                 .buttonStyle(.bordered)
                 .buttonBorderShape(ButtonBorderShape.capsule)
+                .background(Capsule().fill(.background))
         }
     }
 }

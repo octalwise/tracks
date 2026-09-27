@@ -39,12 +39,11 @@ struct StationsView: View {
                                 )
                             } label: {
                                 Image(systemName: "tram.fill")
-                                    .applyForeground(color: south!.routeColor())
+                                    .applyForeground(color: south!.routeColor(), fade: altService)
                                     .frame(height: 22)
                                     .transition(.opacity)
                             }
-                            .applyButtonStyle(color: south!.routeColor())
-                            .opacity(altService ? 0.4 : 1.0)
+                            .applyButtonStyle(color: south!.routeColor(), fade: altService)
                             .frame(width: 22, height: 22)
                             .offset(y: south!.offset ? 20 : 0)
                         }
@@ -81,12 +80,11 @@ struct StationsView: View {
                                 )
                             } label: {
                                 Image(systemName: "tram.fill")
-                                    .applyForeground(color: north!.routeColor())
+                                    .applyForeground(color: north!.routeColor(), fade: altService)
                                     .frame(height: 22)
                                     .transition(.opacity)
                             }
-                            .applyButtonStyle(color: north!.routeColor())
-                            .opacity(altService ? 0.4 : 1.0)
+                            .applyButtonStyle(color: north!.routeColor(), fade: altService)
                             .frame(width: 22, height: 22)
                             .offset(y: north!.offset ? -20 : 0)
                         }
