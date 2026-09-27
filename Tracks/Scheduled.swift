@@ -153,9 +153,7 @@ struct Scheduled {
         let idx1 = STATIONS.firstIndex { $0.contains(id: prevStop.station) }!
         let idx2 = STATIONS.firstIndex { $0.contains(id: nextStop.station) }!
 
-        let station: StationInfo
-
-        if idx1 == idx2 || now >= nextStop.time.addingTimeInterval(-20) {
+        if now >= nextStop.time.addingTimeInterval(-20) {
             return (location: STATIONS[idx2].side(direction: direction), offset: false)
         } else {
             let dt = nextStop.time.timeIntervalSince(prevStop.time)
