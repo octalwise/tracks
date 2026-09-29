@@ -36,7 +36,6 @@ struct AlertItem: View {
 
             VStack {
                 HStack {
-                    // header
                     Text(alert.header)
                         .multilineTextAlignment(.leading)
 
@@ -45,11 +44,10 @@ struct AlertItem: View {
 
                 if alert.description != nil && !alert.description!.isEmpty {
                     HStack {
-                        // description
                         Text(alert.description!)
                             .multilineTextAlignment(.leading)
 
-                            Spacer()
+                        Spacer()
                     }
                 }
             }
