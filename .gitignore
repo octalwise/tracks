@@ -1,10 +1,9 @@
-# macos
 .DS_Store
 
-# xcode
+Secrets.swift
+
 *.xcuserstate
 project.xcworkspace/
 xcuserdata/
 
-# cocoapods
 /Pods/

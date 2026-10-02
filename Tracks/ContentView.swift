@@ -176,7 +176,7 @@ struct ContentView: View {
             var request = URLRequest(url: url)
 
             if req.auth {
-                request.setValue("AUTH", forHTTPHeaderField: "Authorization")
+                request.setValue(Secrets.apiKey, forHTTPHeaderField: "Authorization")
             }
 
             URLSession.shared.dataTask(with: request) { data, _, _ in
