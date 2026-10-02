@@ -23,83 +23,82 @@ struct ContentView: View {
         let altService = service != nil && service! != today!
 
         TabView {
-            NavigationSplitView {
-                ScrollView {
-                    if stations != nil {
-                        StationsView(
-                            trains: serviceTrains ?? [],
-                            stations: stations!,
-                            altService: altService
-                        )
-                        .toolbar {
-                            if service != nil {
-                                serviceButton()
+            Tab("Stations", systemImage: "house.fill") {
+                NavigationSplitView {
+                    ScrollView {
+                        if stations != nil {
+                            StationsView(
+                                trains: serviceTrains ?? [],
+                                stations: stations!,
+                                altService: altService
+                            )
+                            .toolbar {
+                                if service != nil {
+                                    serviceButton()
+                                }
                             }
                         }
                     }
-                }
-                .navigationTitle("Stations")
-                .navigationSplitViewColumnWidth(ideal: 400)
-            } detail: {
-                NavigationStack {
-                    ContentUnavailableView("Select a station or train", systemImage: "tram")
-                }
-            }
-            .tabItem {
-                Label("Stations", systemImage: "house.fill")
+                    .navigationTitle("Stations")
+                    .navigationSplitViewColumnWidth(ideal: 400)
+                } detail: {
+                    NavigationStack {
+                        ContentUnavailableView("Select a station or train", systemImage: "tram")
+                    }
+                }.ignoresSafeArea(.container, edges: .top)
             }
 
-            NavigationSplitView {
-                ScrollView {
-                    if stations != nil && serviceTrains != nil {
-                        TripsView(
-                            stations: stations!,
-                            trains: serviceTrains!,
-                            altService: altService,
+            Tab("Trips", systemImage: "map.fill") {
+                NavigationSplitView {
+                    ScrollView {
+                        if stations != nil && serviceTrains != nil {
+                            TripsView(
+                                stations: stations!,
+                                trains: serviceTrains!,
+                                altService: altService,
 
-                            from: stations!.first { $0.name == "Palo Alto" }!,
-                            to: stations!.first { $0.name == "San Mateo" }!
-                        )
-                        .toolbar {
-                            if service != nil {
-                                serviceButton()
+                                from: stations!.first { $0.name == "Palo Alto" }!,
+                                to: stations!.first { $0.name == "San Mateo" }!
+                            )
+                            .toolbar {
+                                if service != nil {
+                                    serviceButton()
+                                }
                             }
+                        } else {
+                            ProgressView() {
+                                Text("Loading Trains")
+                            }.padding(15)
                         }
-                    } else {
-                        ProgressView() {
-                            Text("Loading Trains")
-                        }.padding(15)
                     }
-                }
-                .navigationTitle("Trips")
-                .navigationSplitViewColumnWidth(ideal: 400)
-            } detail: {
-                NavigationStack {
-                    ContentUnavailableView("Select a train", systemImage: "tram")
-                }
-            }
-            .tabItem {
-                Label("Trips", systemImage: "map.fill")
+                    .navigationTitle("Trips")
+                    .navigationSplitViewColumnWidth(ideal: 400)
+                } detail: {
+                    NavigationStack {
+                        ContentUnavailableView("Select a train", systemImage: "tram")
+                    }
+                }.ignoresSafeArea(.container, edges: .top)
             }
 
-            NavigationStack {
-                ScrollView {
-                    if alerts != nil {
-                        AlertsView(alerts: alerts!)
-                    } else {
-                        ProgressView() {
-                            Text("Loading Alerts")
-                        }.padding(15)
+            Tab("Alerts", systemImage: "exclamationmark.triangle.fill") {
+                NavigationStack {
+                    ScrollView {
+                        if alerts != nil {
+                            AlertsView(alerts: alerts!)
+                        } else {
+                            ProgressView() {
+                                Text("Loading Alerts")
+                            }.padding(15)
+                        }
                     }
-                }.navigationTitle("Alerts")
-            }
-            .tabItem {
-                Label("Alerts", systemImage: "exclamationmark.triangle.fill")
+                    .navigationTitle("Alerts")
+                }
             }
         }
         .onAppear {
             loadStations()
             fetch()
+
             if laCalendar.component(.hour, from: Date()) >= 3 {
                 lastUpdate = Date()
             }
