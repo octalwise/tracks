@@ -38,7 +38,7 @@ struct StationsView: View {
                             }
                             .applyButtonStyle(color: south!.routeColor(), fade: altService)
                             .frame(width: 22, height: 22)
-                            .offset(y: south!.offset ? 18 : 0)
+                            .offset(y: south!.offset ? 19 : 0)
                         }
                     }
 
@@ -77,7 +77,7 @@ struct StationsView: View {
                             }
                             .applyButtonStyle(color: north!.routeColor(), fade: altService)
                             .frame(width: 22, height: 22)
-                            .offset(y: north!.offset ? -18 : 0)
+                            .offset(y: north!.offset ? -19 : 0)
                         }
                     }
                 }
